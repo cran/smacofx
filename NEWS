@@ -1,0 +1,47 @@
+Version 0.6-3
+
+- Updated examples for permtest to be <5s. Updated DESCRIPTION and docs
+
+Version 0.6-2
+
+- Changed init=NULL handling in the sparsified models. We now fit an rstress model instead of torgerson (more useful since we cut off based on fitted distances).
+
+Version 0.6-1
+
+- Added new clca and clda that wrap ProjectionBasedClustering::CCA as works horse.    
+
+Version 0.6-0
+
+- Renamed clca and pclca and clda and pclda functionalities to spmds (sparsified post mds) as our implementation is only inspired by CLCA. The used majorization is a quasi-majorization which means stress can increase in iterations or completely fail up until the point where we have a stable assignment of weight that are 0. The sparsity is not necessarily optimal and will likely be improved upon in the future.   
+
+Version 0.5-0
+
+- Improved clca and pclca objects. Added clda, pclda, som_pclda som_clda.
+
+Version 0.4-3
+
+- Some bug fixes, new docs and tests. Improved clca and pclca and som_clca som_pclca.
+
+Version 0.4-0
+
+- Made plot.cmdscalex with the same defaults as plot.smacofP
+
+Version 0.3-2
+
+- sammon can now also take data frames.
+
+Version 0.3-1
+
+- Updated cmdscale wrapper and the plot function for cmdscalex. Same for sammon. Factorized all into their own files.
+
+Version 0.3-0
+
+- Added function for self organizing map-style clca. 
+
+Version 0.2-0
+
+- Fixed compiling issues and methods and all. 
+
+Version 0.0-1
+
+- Forked the present functionality from the COPS and STOPS packages to this package. 
