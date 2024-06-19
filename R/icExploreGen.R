@@ -23,10 +23,10 @@
 #' 
 #' @examples
 #'
-#' dis<-smacof::kinshipdelta
+#' dis<-kinshipdelta
 #' 
 #' ## Version 1: Using a fitted object (recommended)
-#' res1<-rStressMin(delta=dis,type="ordinal",itmax=100)
+#' res1<-rStressMin(dis,type="ordinal",itmax=100)
 #' resm<-icExploreGen(res1,nrep=5)
 #'
 #' ## Version 2: Using a call object and supplying conflist

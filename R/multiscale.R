@@ -12,7 +12,7 @@
 ## #' @param verbose should iteration output be printed; if > 1 then yes
 ## #' @param kappa As this is not exactly multiscale but an r-stress approximation, we have multiscale only for kappa->0. This argument can therefore be used to make the approximation more accurate by making it smaller. Default is 0.1.
 ## #' 
-## #' @return a smacofP object (inheriting form smacofB, see \code{\link{smacofSym}}). It is a list with the components
+## #' @return a smacofP object (inheriting form smacofB, see \code{\link[smacof]{smacofSym}}). It is a list with the components
 ## #' \itemize{
 ## #' \item delta: Observed dissimilarities on log scale 
 ## #' \item obsdiss: Observed dissimilarities (dhats), optimally scaled and normalized 
@@ -79,7 +79,7 @@
 ##     deltaorig <- delta
 ##     delta <- log(delta) #The multiscale dissimilarities 
 ##     diag(delta) <- 0 #making main diagonal 0.
-##     if(any(delta)<0) stop("Nonnegative dhats after log transformation. Input different dissimilarities.\n")
+##     if(any(delta<0)) stop("Nonnegative dhats after log transformation. Input different dissimilarities.\n")
 ##     #weightmato <- weightmat
 ##     #weightmat <- weightmat^nu
 ##     weightmat[!is.finite(weightmat)] <- 1
@@ -194,7 +194,7 @@
 
 #' Multiscale SMACOF
 #'
-#' An implementation for maximum likelihood MDS aka multiscale that minimizes the multiscale stress by majorization with ratio and interval optimal scaling. Uses a repeat loop.
+#' An implementation for maximum likelihood MDS aka multiscale that minimizes the multiscale stress by majorization with ratio and interval optimal scaling. Uses a repeat loop. Note that since this done via the route of r-sytress, the multiscale stress is approximate and only accuarte for kappa->0.
 #' 
 #' @param delta dist object or a symmetric, numeric data.frame or matrix of distances. Warning: these will get transformed to the log scale, so make sure that log(delta)>=0.    
 #' @param type what optimal scaling type of MDS to fit. Currently one of "ratio" or "interval". Default is "ratio". 
@@ -207,7 +207,7 @@
 #' @param kappa As this is not exactly multiscale but an r-stress approximation, we have multiscale only for kappa->0. This argument can therefore be used to make the approximation more accurate by making it smaller. Default is 0.1.
 #' @param principal If ‘TRUE’, principal axis transformation is applied to the final configuration
 #' 
-#' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+#' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 #' \itemize{
 #' \item delta: Observed dissimilarities
 #' \item tdelta: Observed explicitly transformed (log) dissimilarities, normalized
@@ -278,7 +278,7 @@ multiscale <- function (delta, type=c("ratio","interval"), weightmat, init=NULL,
     deltaorig <- delta
     delta <- log(delta) #The multiscale dissimilarities 
     diag(delta) <- 0 #making main diagonal 0.
-    if(any(delta)<0) stop("Nonnegative delta after log transformation. Input different dissimilarities.\n")
+    if(any(delta<0)) stop("Nonnegative delta after log transformation. Input different dissimilarities.\n")
     #weightmato <- weightmat
     #weightmat <- weightmat^nu
     weightmat[!is.finite(weightmat)] <- 0

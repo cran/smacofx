@@ -6,7 +6,7 @@
 #' @param mdscall Alternatively to a fitted object, one can pass a syntactically valid call for any of the MDS functions cops, stops or smacof that find a configuration (not the ones that do parameter selection like pcops or stops). If object and call is given, object takes precedence.
 #' @param ndim Dimensions of target space.
 #' @param conflist Optional list of starting configurations.
-#' @param nstarts If conflist is not supplied, how many random starting configurations should be used. 
+#' @param nstarts If conflist is not supplied, how many random starting configurations should be used. The default is 108, which implies that at least one of the stress is within the lowest 1 percent of all stresses with probability of 1/3 or within the lowest 5 percent of stresses with probability 0.996  
 #' @param return.all Should all fitted MDS be returned. If FALSE (default) only the optimal one is returned.
 #' @param verbose If >0 prints the fitting progress.
 #' @param min lower bound for the uniform distribution to sample from
@@ -22,7 +22,7 @@
 #' \item best: The object resulting from the fit that had the overall lowest objective function value (usually stress)
 #' \item stressvec: The vector of objective function values
 #' \item models: A list of all the fitted objects.
-#'}
+#' }
 #'
 #' @importFrom stats runif
 #' 
@@ -43,7 +43,7 @@
 #' c1 <- call("rstressMin",delta=dis,type="ordinal",itmax=100)
 #' resm<-multistart(mdscall=c1,conflist=conflist,return.all=TRUE)
 #' 
-multistart <- function(object,mdscall=NULL,ndim=2,conflist,nstarts=10,return.all=FALSE,verbose=TRUE,min=-5, max=5)
+multistart <- function(object,mdscall=NULL,ndim=2,conflist,nstarts=108,return.all=FALSE,verbose=TRUE,min=-5, max=5)
 {
     # We need the call because there isn't a singular or nested API for all the functions and it would be undoable/annoying to build all the permutations into the function
     if(is.null(mdscall) && missing(object)) stop("An MDS function call (either as call object or list) or a fitted object must be provided.") 

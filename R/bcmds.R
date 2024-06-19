@@ -1,19 +1,22 @@
 #' Box-Cox MDS
 #'
-#' This function minimizes the Box-Cox Stress of Chen & Buja (2013) via gradient descent. This is a ratio metric scaling method. The transformations are not straightforward to interpret but mu is associated with fitted distances in the configuration and lambda with the dissimilarities. Concretely for fitted distances (attraction part) it is BC_{mu+lambda}(d(X)) and for the repulsion part it is delta^lambdaBC_{mu}(d(X)) with BC being the one-parameter Box Cox transformation.
+#' This function minimizes the Box-Cox Stress of Chen & Buja (2013) via gradient descent. This is a ratio metric scaling method. The transformations are not straightforward to interpret but mu is associated with fitted distances in the configuration and lambda with the dissimilarities. Concretely for fitted distances (attraction part) it is \eqn{BC_{mu+lambda}(d(X))} and for the repulsion part it is \eqn{delta^lambda BC_{mu}(d(X))} with BC being the one-parameter Box-Cox transformation.
 #'
 #' 
-#' @param delta dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object 
-#' @param init initial configuration. If NULL a classical scaling solution is used. 
-#' @param ndim the dimension of the configuration
+#' @param delta dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object
 #' @param mu mu parameter. Should be 0 or larger for everything working ok. If mu<0 it works but I find the MDS model is strange and normalized stress tends towards 0 regardless of fit. Use normalized stress at your own risk in that case.
 #' @param lambda lambda parameter. Must be larger than 0.
-#' @param rho the rho parameter, power for the weights (the easiest).
+#' @param rho the rho parameter, power for the weights (called nu in the original article).
+#' @param type what type of MDS to fit. Only "ratio" currently. 
+#' @param ndim the dimension of the configuration
+#' @param init initial configuration. If NULL a classical scaling solution is used. 
+#' @param weightmat a matrix of finite weights. Not implemented.
 #' @param itmax number of optimizing iterations, defaults to 2000.
 #' @param verbose prints progress if > 3.
 #' @param addD0 a small number that's added for D(X)=0 for numerical evaluation of worst fit (numerical reasons, see details). If addD0=0 the normalized stress for mu!=0 and mu+lambda!=0 is correct, but will give useless normalized stress for mu=0 or mu+lambda!=0.
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
-#'
+#' @param normconf normalize the configuration to sum(delta^2)=1 (as in the power stresses). Default is FALSE. Note that then the distances in confdist do not match manually calculated ones.
+#' 
 #' @details For numerical reasons with certain parameter combinations, the normalized stress uses a configuration as worst result where every d(X) is 0+addD0. The same number is not added to the delta so there is a small inaccuracy of the normalized stress (but negligible if min(delta)>>addD0). Also, for mu<0 or mu+lambda<0 the normalization cannot generally be trusted (in the worst case of D(X)=0 one would have an 0^(-a)).    
 #'
 #'
@@ -31,7 +34,7 @@
 #' \item niter: Number of iterations
 #' \item nobj: Number of objects
 #' \item pars: hyperparameter vector theta
-#' \item weightmat:  delta^rho
+#' \item weightmat: 1-diagonal matrix. For compatibility with smacofP classes. 
 #' \item parameters, pars, theta: The parameters supplied
 #' \item call the call
 #' }
@@ -55,14 +58,17 @@
 #' plot(res)
 #' 
 #' @export
-bcmds <- function(delta,mu=1,lambda=1,rho=0,ndim=2,itmax=2000,init=NULL,verbose=0,addD0=1e-4,principal=FALSE)
+bcmds <- function(delta,mu=1,lambda=1,rho=0,type="ratio", ndim=2,weightmat=1-diag(nrow(delta)),itmax=2000,init=NULL,verbose=0,addD0=1e-4,principal=FALSE,normconf=FALSE)
 {
   if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
   if(!isSymmetric(delta)) stop("Delta is not symmetric.\n")
   if(verbose>0) cat("Minimizing bcStress with mu=",mu,"lambda=",lambda,"rho=",rho,"\n")
-  labos <- rownames(delta) 
   nu <- rho  
-  Dorig <- Do <- delta 
+  Dorig <- Do <- delta
+  n <- nrow(Do)
+  if (ndim > (n - 1)) stop("Maximum number of dimensions is n-1!")
+  if(is.null(rownames(delta))) rownames(delta) <- 1:n
+  labos <- rownames(delta) 
   d <- ndim
   X1 <- init
   xstart <- init
@@ -70,7 +76,7 @@ bcmds <- function(delta,mu=1,lambda=1,rho=0,ndim=2,itmax=2000,init=NULL,verbose=
   if(lambda<=0) stop("The lambda parameter must be strictly positive.")
   lambdaorig <- lambda
   lambda <- 1/lambda
-  n <- nrow(Do)
+
   Dnu <- Do^nu
   Dnulam <- Do^(nu+1/lambda)
   diag(Dnu) <- 0
@@ -224,6 +230,7 @@ while ( stepsize > 1E-5 && i < niter)
   result <- list()
   result$delta <- stats::as.dist(Dorig)
   result$dhat <- stats::as.dist(Do)  #TODO: Check again
+  if(isTRUE(normconf)) X1 <- X1/enorm(X1)
   if (principal) {
         X1_svd <- svd(X1)
         X1 <- X1 %*% X1_svd$v
@@ -234,7 +241,7 @@ while ( stepsize > 1E-5 && i < niter)
   result$confdist <- stats::as.dist(D1) #TODO: Check again
   result$conf <- X1 #new
   result$stress <- sqrt(s1n)
-  weightmat <- stats::as.dist(Dnu)
+  weightmat <- stats::as.dist(1-diag(n))
   spoint <- spp(result$delta, result$confdist, weightmat)
   resmat<-spoint$resmat
   rss <- sum(spoint$resmat[lower.tri(spoint$resmat)])
@@ -253,12 +260,12 @@ while ( stepsize > 1E-5 && i < niter)
   result$stress.m <- s1n
   result$stress.r <- s1
   result$tdelta <- stats::as.dist(Do)
-  result$parameters <- c(mu=mu,lambda=lambda,rho=nu)
-  result$pars <- c(mu=mu,lambda=lambda,rho=nu)
-  result$theta <- c(mu=mu,lambda=lambda,rho=nu)
+  result$parameters <- c(mu=mu,lambda=lambdaorig,rho=nu)
+  result$pars <- c(mu=mu,lambda=lambdaorig,rho=nu)
+  result$theta <- c(mu=mu,lambda=lambdaorig,rho=nu)
   #result$tweightmat <- weightmat
   result$mu <- mu
-  result$lambda <- lambda
+  result$lambda <- lambdaorig
   result$rho <- nu
   class(result) <- c("bcmds","smacofP","smacofB","smacof")
   return(result)

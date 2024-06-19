@@ -127,7 +127,7 @@ so_smdda(
 \item{epochs}{for 'so_pclca' and tau being scalar, it gives the number of passes through the data. The sequence of taus created is 'seq(tau,tau/epochs,length.out=epochs)'. If tau is of length >1, this argument is ignored.}
 }
 \value{
-a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 \itemize{
 \item delta: Observed, untransformed dissimilarities
 \item tdelta: Observed explicitly transformed dissimilarities, normalized
@@ -183,8 +183,8 @@ res2$tweightmat
 \donttest{
 ## Self-organizing map style (as in the original publication)
 #run the som-style (p)smdda 
-sommod1<-so_spmdda(dis,tau=2,k=5,kappa=0.5,lambda=2,epochs=100,verbose=1)
-sommod2<-so_smdda(dis,tau=2.5,epsilon=1,epochs=50,verbose=1)
+sommod1<-so_spmdda(dis,tau=2,k=5,kappa=0.5,lambda=2,epochs=10,verbose=1)
+sommod2<-so_smdda(dis,tau=2.5,epsilon=1,epochs=10,verbose=1)
 sommod1
 sommod2
 }

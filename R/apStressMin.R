@@ -1,6 +1,6 @@
-#' Approximate Power Stress SMACOF
+#' Approximate Power Stress MDS 
 #'
-#' An implementation to minimize power stress by majorization with ratio or interval optimal scaling. Usually more accurate but slower than 'powerStressFast'. Uses a repeat loop.
+#' An implementation to minimize approximate power stress by majorization with ratio or interval optimal scaling. This approximates the power stress objective in such a way that it can be fitted with SMACOF without distance transformations. See Rusch et al. (2021) for details.  
 #' 
 #' @param delta dist object or a symmetric, numeric data.frame or matrix of distances
 #' @param kappa power of the transformation of the fitted distances; defaults to 1
@@ -15,7 +15,7 @@
 #' @param verbose should iteration output be printed; if > 1 then yes
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
 #'
-#' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+#' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 #' \itemize{
 #' \item delta: Observed, untransformed dissimilarities
 #' \item tdelta: Observed explicitly transformed dissimilarities, normalized
@@ -31,12 +31,15 @@
 #' \item type: Type of MDS model 
 #' \item weightmat: weighting matrix as supplied 
 #' \item stress.m: Default stress (stress-1^2)
-#' \item tweightmat: transformed weightingmatrix (here weightmat^nu)
+#' \item tweightmat: transformed weighting matrix (here weightmat^nu)
 #' }
 #'
-#' @section Note:
+#' @section
+#' Note:
 #' Internally we calculate the approximation parameters upsilon=nu+2*lambda*(1-(1/kappa)) and tau=lambda/kappa. They are not output. 
 #'
+#' @references Rusch, Mair, Hornik (2021). Cluster Optimized Proximity Scaling. JCGS <doi:10.1080/10618600.2020.1869027>
+#' 
 #' @importFrom stats dist as.dist
 #' 
 #' @examples

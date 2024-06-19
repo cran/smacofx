@@ -103,7 +103,7 @@ so_smds(
 \item{epochs}{for 'so_spmds' and tau being scalar, it gives the number of passes through the data. The sequence of taus created is 'seq(tau,tau/epochs,length.out=epochs)'. If tau is of length >1, this argument is ignored.}
 }
 \value{
-a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 \itemize{
 \item delta: Observed, untransformed dissimilarities
 \item tdelta: Observed explicitly transformed dissimilarities, normalized
@@ -137,8 +137,8 @@ In the standard functions 'spmds' and 'smds' we keep tau fixed throughout. This 
 }
 \examples{
 dis<-smacof::morse
-res<-spmds(dis,type="interval",kappa=2,lambda=2,tau=0.35,itmax=100) #use higher itmax
-res2<-smds(dis,type="interval",tau=0.35,itmax=500) #use higher itmax
+res<-spmds(dis,type="interval",kappa=2,lambda=2,tau=0.3,itmax=100) #use higher itmax
+res2<-smds(dis,type="interval",tau=0.3,itmax=500) #use higher itmax
 res
 res2
 summary(res)
@@ -147,15 +147,15 @@ plot(res)
 plot(res2)
 par(oldpar)
 
-##which d_{ij}(X) exceeded tau at convergence (i.e., have been set to 0)?
+##which d_{ij}(X)^kappa exceeded tau at convergence (i.e., have been set to 0)?
 res$tweightmat
 res2$tweightmat
 
 \donttest{
 ## Self-organizing map style (as in the clca publication)
 #run the som-style (p)smds 
-sommod1<-so_spmds(dis,tau=0.3,kappa=0.5,lambda=2,epochs=10,verbose=1)
-sommod2<-so_smds(dis,tau=0.3,epochs=10,verbose=1)
+sommod1<-so_spmds(dis,tau=1,kappa=0.5,lambda=2,epochs=10,verbose=1)
+sommod2<-so_smds(dis,tau=1,epochs=10,verbose=1)
 sommod1
 sommod2
 }

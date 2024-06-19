@@ -6,7 +6,7 @@
 \alias{apostmds}
 \alias{apstressMin}
 \alias{apstressmds}
-\title{Approximate Power Stress SMACOF}
+\title{Approximate Power Stress MDS}
 \usage{
 apStressMin(
   delta,
@@ -109,7 +109,7 @@ apstressmds(
 \item{principal}{If 'TRUE', principal axis transformation is applied to the final configuration}
 }
 \value{
-a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 \itemize{
 \item delta: Observed, untransformed dissimilarities
 \item tdelta: Observed explicitly transformed dissimilarities, normalized
@@ -125,11 +125,11 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It 
 \item type: Type of MDS model 
 \item weightmat: weighting matrix as supplied 
 \item stress.m: Default stress (stress-1^2)
-\item tweightmat: transformed weightingmatrix (here weightmat^nu)
+\item tweightmat: transformed weighting matrix (here weightmat^nu)
 }
 }
 \description{
-An implementation to minimize power stress by majorization with ratio or interval optimal scaling. Usually more accurate but slower than 'powerStressFast'. Uses a repeat loop.
+An implementation to minimize approximate power stress by majorization with ratio or interval optimal scaling. This approximates the power stress objective in such a way that it can be fitted with SMACOF without distance transformations. See Rusch et al. (2021) for details.
 }
 \section{Note}{
 
@@ -145,4 +145,7 @@ plot(res)
 plot(res,"Shepard")
 plot(res,"transplot")
 
+}
+\references{
+Rusch, Mair, Hornik (2021). Cluster Optimized Proximity Scaling. JCGS <doi:10.1080/10618600.2020.1869027>
 }

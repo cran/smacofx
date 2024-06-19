@@ -55,11 +55,13 @@
 #' permtest(fitgop1, GOPdtm[,1:10], nrep = 5, method.dat = "binary")
 permtest.smacofP <- function(object, data, method.dat = "pearson", nrep = 100, verbose = FALSE, ...)
 {
+    calli <- match.call()
     if(any(class(object)=="smacof"))
     {
      class(object) <- c("smacof",class(object))
     } else stop("MDS object must inherit from smacof.")
     out <- smacof::permtest(object,data=data,method.dat=method.dat,nrep=nrep,verbose=verbose,...)
+    out$call <- calli
     class(object) <- class(object)[-1]
     out
  }

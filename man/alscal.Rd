@@ -2,7 +2,7 @@
 % Please edit documentation in R/alscal.R
 \name{alscal}
 \alias{alscal}
-\title{ALSCAL SMACOF}
+\title{ALSCAL - MDS via S-Stress Minimization}
 \usage{
 alscal(
   delta,
@@ -36,7 +36,7 @@ alscal(
 \item{principal}{If ‘TRUE’, principal axis transformation is applied to the final configuration}
 }
 \value{
-a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 \itemize{
 \item delta: Observed untransformed dissimilarities
 \item tdelta: Observed explicitly transformed (squared) dissimilarities, normalized
@@ -56,7 +56,7 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It 
 }
 }
 \description{
-An implementation to minimize s-stress by majorization with ratio and interval optimal scaling. Uses a repeat loo
+An implementation to minimize s-stress by majorization with ratio and interval optimal scaling.
 }
 \examples{
 dis<-smacof::kinshipdelta

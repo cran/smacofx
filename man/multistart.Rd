@@ -9,7 +9,7 @@ multistart(
   mdscall = NULL,
   ndim = 2,
   conflist,
-  nstarts = 10,
+  nstarts = 108,
   return.all = FALSE,
   verbose = TRUE,
   min = -5,
@@ -25,7 +25,7 @@ multistart(
 
 \item{conflist}{Optional list of starting configurations.}
 
-\item{nstarts}{If conflist is not supplied, how many random starting configurations should be used.}
+\item{nstarts}{If conflist is not supplied, how many random starting configurations should be used. The default is 108, which implies that at least one of the stress is within the lowest 1 percent of all stresses with probability of 1/3 or within the lowest 5 percent of stresses with probability 0.996}
 
 \item{return.all}{Should all fitted MDS be returned. If FALSE (default) only the optimal one is returned.}
 

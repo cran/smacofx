@@ -15,7 +15,7 @@
 #' @param verbose should iteration output be printed; if > 1 then yes
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
 #'
-#' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+#' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 #' \itemize{
 #' \item delta: Observed, untransformed dissimilarities
 #' \item tdelta: Observed explicitly transformed dissimilarities, normalized
@@ -46,10 +46,12 @@
 #' 
 #' @export
 rpowerStressMin <- function (delta, expo=1, nu=1,  type="ratio", weightmat, init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal=FALSE) {
+    cali <- match.call()
     if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
     if(!isSymmetric(delta)) stop("delta is not symmetric.\n")
     if(missing(weightmat)) weightmat <- 1-diag(nrow(delta))
     out <- powerStressMin(delta=delta, kappa=expo, lambda=expo, nu=nu,  type=type, weightmat=weightmat, init=init, ndim = ndim, acc= acc, itmax = itmax, verbose = verbose, principal=principal)
+    out$call <- cali
     return(out)
 }
 

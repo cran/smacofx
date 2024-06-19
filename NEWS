@@ -1,6 +1,74 @@
+Version 1.5-1
+
+- Added a weightmat and a type argument to bcmds and lmds. Not of consequence for the fit, but to streamline UI. Changed $weightmat slot in bcmds to diagonal matrix. 
+
+Version 1.5-0
+
+- Added Koller data snapshot.
+
+Version 1.4-1
+
+- Changed smpds (and related funcs) to weight zero is d(X)^kappa>tau, not d(X)>tau as before
+
+Version 1.3-3
+
+- Added argument normconf to bcmds and lmds so that the configuration get normed the same way as the power stresses (default is FALSE). Note that then the foo$confdist no longer matched dist(foo$conf). Added biplotmds for bcmds and lmds objects (which work better with the non-normalized configurations in these two). 
+
+Version 1.3-2
+
+- Fixed biplotmds to work with any objects that inherit from smacof (e.g. in cops).
+
+Version 1.3-1
+
+- Added a handler for the itmax in a call when using jackknife.smacofP oder bootmds.smacofP so that it is passed down accordingly. Necessary also for the corresponding methods in stops.  
+
+Version 1.2-4
+
+- Changed default nrep in multistart. 
+
+Version 1.2-3
+
+- Fixed jackmds and smacofxDeleteOne to also work with init. New multistart default and updates to docs.
+
+Version 1.2-2
+
+- Fixed returned calls for functions that internally call other functions.
+
+Version 1.2-1
+
+- Fixed jackknife to work with weightmat and also with bcmds and lmds. Updated docs.
+
+Version 1.2-0
+
+- Fixed jackknife for smacofP objects (jackmds).  
+
+Version 1.1-0
+
+- Added corpsepaint data. 
+
+Version 1.0-1
+
+- Fixed minor bugs in lmds and bcmds.
+
+Version 1.0-0
+
+- Fixed some docs and set numbering to start at 1.0-0. Fixed roxygen @docType change from here https://github.com/r-lib/roxygen2/issues/1491. 
+
+Version 0.6-6
+
+- Fixed CRAN request: Exported biplotmds.smacofP. On CRAN now, initial CRAN release.
+
+Version 0.6-5
+
+- Fixed CRAN requests: changed \donttrun to \donttest, added on.exit() when there were changes to par, for examples that changed par we reconstruct the original par.  
+
+Version 0.6-4
+
+- Tested and submitted to CRAN. 
+
 Version 0.6-3
 
-- Updated examples for permtest to be <5s. Updated DESCRIPTION and docs
+- Updated examples for permtest to be <5s. Updated DESCRIPTION and docs. 
 
 Version 0.6-2
 

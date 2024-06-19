@@ -1,4 +1,4 @@
-#' Calculating the blended chi square distance matrix between n vectors.
+#' Calculates the blended Chi-square distance matrix between n vectors
 #'
 #' The pairwise blended chi-distance of two vectors x and y is sqrt(sum(((x[i]-y[i])^2)/(2*(ax[i]+by[i])))), with originally a in [0,1] and b=1-a as in Lindsay (1994) (but we allow any non-negative a and b). The function calculates this for all pairs of rows of a matrix or data frame x.    
 #'
@@ -8,6 +8,8 @@
 #'
 #' @return a symmetric n times n matrix of pairwise blended chi-square distance (between rows of x) with 0 in the main diagonal. It is an object of class distance and matrix with attributes "method", "type" and "par", the latter returning the a and b values.  
 #'
+#' @references Lindsay (1994). Efficiency versus robustness: the case for minimum Hellinger distance and related methods. Annals of Statistics, 22 (2), 1081-1114. <doi:10.1214/aos/1176325512>
+#' 
 #' @export
 bcsdistance <- function(x,a=0.5,b=1-a)
 {

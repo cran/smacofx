@@ -12,7 +12,7 @@
 #' @param verbose should iteration output be printed; if > 1 then yes
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
 #'
-#' @return a 'smacofP' object (inheriting from smacofB, see \code{\link{smacofSym}}). It is a list with the components
+#' @return a 'smacofP' object (inheriting from smacofB, see \code{\link[smacof]{smacofSym}}). It is a list with the components
 #' \itemize{
 #' \item delta: Observed dissimilarities
 #' \item tdelta: Observed explicitly transformed dissimilarities, normalized
@@ -82,15 +82,12 @@ sammonmap <- function (delta, type=c("ratio","interval"), weightmat, init=NULL, 
     weightmatorig <- weightmat #back up weightmat
     deltaorig <- delta #backup delta
     weightmato <- weightmat
-    ## We do the sammon weighting before anything, then normalize the delta accordingly and
-    ## later sammon weight with the normalized delta again.
-    ## I checked whether we can skip the first or second weighting step (we can for ratio and interval). The two are the same anyway
-    ## Skipping the second weighting gives a bit more variation in the configs between interval and ratio, but we're not gonna do that 
+    ## We do the sammon weighting before anything, then normalize the delta accordingly 
+    ## I checked whether we should do a first (original delta) and second (enormed delta) weighting step (we can for ratio and interval). We now use enormed delta.
     delta <- delta / enorm (delta, weightmat) #Normalize with Sammon weighted
     weightmat <- weightmato/delta #Sammon weighting #1
     weightmat[!is.finite(weightmat)] <- 0
     disobj <- smacof::transPrep(as.dist(delta), trans = trans, spline.intKnots = 2, spline.degree = 2)#spline.intKnots = spline.intKnots, spline.degree = spline.degree) #FIXME: only works with dist() style object
-    #TO check: First enorm and then transprep or other way round? Makes no difference.
     deltaold <- delta
     ## Add an intercept to the spline base transformation
     #if (trans == "mspline") disobj$base <- cbind(rep(1, nrow(disobj$base)), disobj$base)
@@ -105,14 +102,15 @@ sammonmap <- function (delta, type=c("ratio","interval"), weightmat, init=NULL, 
     dold <- sqdist (xold)
    ##first optimal scaling
     eold <- as.dist(sqrt(dold))
-    ##Samon weighting again with normalized delta as w/delta * (delta-d(X)) 
+    ##Second samon weighting step with the Samon weighting normalized delta as w/delta * (delta-d(X)) 
     #weightmat <- weightmato/delta # Sammon weighting #2
     #weightmat[!is.finite(weightmat)] <- 0
-    dhat <- smacof::transform(eold, disobj, w = as.dist(weightmat), normq = 0.5) #calculate dhats. There is the sammon mapping already included via the w, I think
+    #we do not weight with optimally scaled dhats 
+    dhat <- smacof::transform(eold, disobj, w = as.dist(weightmat), normq = 0.5) #calculate dhats. There is the sammon mapping already included via the w argument.
     dhatt <- dhat$res 
     dhatd <- structure(dhatt, Size = n, call = quote(as.dist.default(m=b)), class = "dist", Diag = FALSE, Upper = FALSE)
     delta <- as.matrix(dhatd)
-    ##Sammon weighting #3: Can't work because the majorization isn't working anymore if we weight with optimally scaled delta 
+    ##Sammon weighting #3: We don't do that because majorization isn't working anymore if we weight with optimally scaled delta 
     #weightmat <- weightmato/delta #sammon weighting with dhat and we always use weightmato/delta
     #weightmat[!is.finite(weightmat)] <- 0
     rold <- sum (weightmat * delta * mkPower (dold, r))
@@ -231,7 +229,7 @@ sammonmap <- function (delta, type=c("ratio","interval"), weightmat, init=NULL, 
 ## #' @param itmax maximum number of iterations. Default is 10000.
 ## #' @param verbose should iteration output be printed; if > 1 then yes
 ## #'
-## #' @return a smacofP object (inheriting form smacofB, see \code{\link{smacofSym}}). It is a list with the components
+## #' @return a smacofP object (inheriting form smacofB, see \code{\link[smacof]{smacofSym}}). It is a list with the components
 ## #' \itemize{
 ## #' \item delta: Observed dissimilarities  
 ## #' \item obsdiss: Observed dissimilarities (dhats), optimally scaled and normalized 

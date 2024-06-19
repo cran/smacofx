@@ -11,7 +11,7 @@
 ## #' @param itmax maximum number of iterations. Default is 10000.
 ## #' @param verbose should iteration output be printed; if > 1 then yes
 ## #'
-## #' @return a smacofP object (inheriting form smacofB, see \code{\link{smacofSym}}). It is a list with the components
+## #' @return a smacofP object (inheriting form smacofB, see \code{\link[smacof]{smacofSym}}). It is a list with the components
 ## #' \itemize{
 ## #' \item delta: Observed dissimilarities  
 ## #' \item obsdiss: Observed dissimilarities (dhats), optimally scaled and normalized 
@@ -202,7 +202,7 @@
 #' @param verbose should iteration output be printed; if > 1 then yes
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
 #' 
-#' @return a 'smacofP' object (inheriting from smacofB, see \code{\link{smacofSym}}). It is a list with the components
+#' @return a 'smacofP' object (inheriting from smacofB, see \code{\link[smacof]{smacofSym}}). It is a list with the components
 #' \itemize{
 #' \item delta: Observed untransformed dissimilarities
 #' \item tdelta: Observed explicitly transformed dissimilarities, normalized
@@ -278,7 +278,7 @@ elscal <- function (delta, type=c("ratio","interval"), weightmat, init=NULL, ndi
     weightmat[!is.finite(weightmat)] <- 0
     disobj <- smacof::transPrep(as.dist(delta), trans = trans, spline.intKnots = 2, spline.degree = 2)#spline.intKnots = spline.intKnots, spline.degree = spline.degree) #FIXME: only works with dist() style object 
     ## Add an intercept to the spline base transformation
-                                        #if (trans == "mspline") disobj$base <- cbind(rep(1, nrow(disobj$base)), disobj$base)
+    #if (trans == "mspline") disobj$base <- cbind(rep(1, nrow(disobj$base)), disobj$base)
     deltaold <- delta
     itel <- 1
     ##Starting Configs

@@ -20,7 +20,7 @@
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
 #' @param epochs for 'so_spmds' and tau being scalar, it gives the number of passes through the data. The sequence of taus created is 'seq(tau,tau/epochs,length.out=epochs)'. If tau is of length >1, this argument is ignored.
 #'
-#' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+#' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 #' \itemize{
 #' \item delta: Observed, untransformed dissimilarities
 #' \item tdelta: Observed explicitly transformed dissimilarities, normalized
@@ -53,8 +53,8 @@
 #' 
 #' @examples
 #' dis<-smacof::morse
-#' res<-spmds(dis,type="interval",kappa=2,lambda=2,tau=0.35,itmax=100) #use higher itmax
-#' res2<-smds(dis,type="interval",tau=0.35,itmax=500) #use higher itmax
+#' res<-spmds(dis,type="interval",kappa=2,lambda=2,tau=0.3,itmax=100) #use higher itmax
+#' res2<-smds(dis,type="interval",tau=0.3,itmax=500) #use higher itmax
 #' res
 #' res2
 #' summary(res)
@@ -63,15 +63,15 @@
 #' plot(res2)
 #' par(oldpar)
 #'
-#' ##which d_{ij}(X) exceeded tau at convergence (i.e., have been set to 0)?
+#' ##which d_{ij}(X)^kappa exceeded tau at convergence (i.e., have been set to 0)?
 #' res$tweightmat
 #' res2$tweightmat
 #'
 #' \donttest{
 #' ## Self-organizing map style (as in the clca publication)
 #' #run the som-style (p)smds 
-#' sommod1<-so_spmds(dis,tau=0.3,kappa=0.5,lambda=2,epochs=10,verbose=1)
-#' sommod2<-so_smds(dis,tau=0.3,epochs=10,verbose=1)
+#' sommod1<-so_spmds(dis,tau=1,kappa=0.5,lambda=2,epochs=10,verbose=1)
+#' sommod2<-so_smds(dis,tau=1,epochs=10,verbose=1)
 #' sommod1
 #' sommod2
 #' }
@@ -139,8 +139,9 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
     xstart <- xold
     xold <- xold / enorm (xold) 
     nn <- diag (n)
-    dold <- sqdist (xold)
-    weightmat[sqrt(dold)>tau] <- 0 ##CCA penalty
+    dold <- sqdist (xold) #squared distances
+    doldpow <- mkPower(dold,kappa/2)#distances^kappa
+    weightmat[doldpow>tau] <- 0 ##CCA penalty
     ##first optimal scaling
     eold <- as.dist(sqrt(dold))
     dhat <- smacof::transform(eold, disobj, w = as.dist(weightmat), normq = normi)
@@ -154,7 +155,7 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
     sold <- 1 - 2 * aold * rold + (aold ^ 2) * nold
     ## Optimizing
     repeat {
-      if(tau<=min(sqrt(dold[lower.tri(dold)]))) stop("Current tau is lower than the smallest fitted distance (so all distances are set to 0). Increase tau.")
+      if(tau<=min(doldpow[lower.tri(doldpow)])) stop("Current tau is lower than the smallest fitted distance (so all distances are set to 0). Increase tau.")
       p1 <- mkPower (dold, r - 1)
       p2 <- mkPower (dold, (2 * r) - 1)
  
@@ -172,13 +173,13 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
       xnew <- my %*% xold
       xnew <- xnew / enorm (xnew)
       dnew <- sqdist (xnew)
-      ## TODO: What do we need? Two possibilities
-      ### Should we always set the 0 freshly, so it is possible that a w_{ij} can change from 0 to >0 again? then we need next line     
+      dnewpow <- mkPower(dnew,kappa/2)
+      ### We always set the 0 freshly, so it is possible that a w_{ij} can change from 0 to >0 again
       weightmat <- weightmato #new
-      ## or should we never change the 0 back once it was found? I'm sure that then the algorithm is majorizing this objective; it also coincides with the above if the d_{ij] are monotonically decreasing but I don't think that is what they do.
+      ## or should we never change the 0 back once it was found? I'm sure that then the algorithm is majorizing this objective; it also coincides with the above if the d_{ij} are monotonically decreasing.
       ## test this 
       weightmat[!is.finite(weightmat)] <- 0
-      weightmat[sqrt(dnew)>tau] <- 0
+      weightmat[dnewpow>tau] <- 0
       ##optimal scaling
       e <- as.dist(sqrt(dnew)) #I need the dist(x) here for interval
       dhat2 <- smacof::transform(e, disobj, w = as.dist(weightmat), normq = normi)  ## dhat update

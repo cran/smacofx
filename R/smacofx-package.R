@@ -13,11 +13,17 @@
 #' \item powerStressMin... power stress MDS (POST-MDS) with ratio, interval optimal scaling
 #' \item apStressMin... approximate POST-MDS with ratio, interval optimal scaling
 #' \item rpowerStressMin... restricted POST-MDS with ratio, interval optimal scaling
-#' \item clca ... curvilinear component analysis with ratio, interval, ordinal optimal scaling
-#' \item pclca ... power curvilinear component analysis with ratio, interval, ordinal optimal scaling
+#' \item clca ... curvilinear component analysis with ratio optimal scaling
+#' \item clda ... curvilinear distance analysis with ratio optimal scaling (ie.e. clca with Isomap distances)
 #' \item bcmds ... Box-Cox MDS with ratio optimal scaling
 #' \item lmds... Local MDS with ratio optimal scaling
 #' \item sammonmap... Sammon mapping with ratio, interval optimal scaling
+#' \item smds ... power curvilinear component analysis with ratio, interval, ordinal optimal scaling
+#' \item pclca ... power curvilinear component analysis with ratio, interval, ordinal optimal scaling
+#' \item smdda ... sparsified multidimensional distance analsysis with ratio interval scaling (this is smds with Isomap distances) 
+#' \item spmdda ... sparsified power multidimensional distance analsysis with ratio interval scaling (this is spmds with Isomap distances)  
+#' \item smds ... sparsified multidimensional scaling with ratio interval scaling (inspired by CLCA, so fitted distances larger than tau are weighted with 0)
+#' \item spmds ... sparsified multidimensional scaling with ratio interval scaling (inspired by CLCA, so fitted distances larger than tau are weighted with 0)
 #' }
 #'
 #' 
@@ -26,12 +32,12 @@
 
 #' Wrappers and convenience functions for the model objects:
 #' \itemize{
-#' \item bootmds ... bootstrapping and MDS model
+#' \item bootmds ... Bootstrapping an MDS model
 #' \item biplotmds ... MDS Biplots
 #' \item icExploreGen ... Expore initial configurations 
-#' \item jackmds ... jackknife for MDS 
-#' \item multistart ... multistart function for MDS  
-#' \item permtest ... permutation test for MDS
+#' \item jackmds ... Jackknife for MDS 
+#' \item multistart ... Multistart function for MDS  
+#' \item permtest ... Permutation test for MDS
 #'}
 #'
 #' Wrappers:
@@ -39,10 +45,6 @@
 #' \item cmdscale ... stats::cmdscale but returns an S3 objects to be used with smacof classes 
 #' \item sammon... MASS::sammon but returns S3 objects to be used with smacof classes 
 #'}
-#'
-#'Authors: Thomas Rusch, Jan de Leeuw, Lisha Chen, Patrick Mair
-#'
-#'Maintainer: Thomas Rusch
 #'
 #'
 #' @examples
@@ -61,9 +63,8 @@
 #'
 #' res2<-msres$best
 #' permtest(res2)
-#' 
-#' 
 #'}
-#' @docType package
-#' @name smacofx
+#' @keywords internal
+#' @aliases smacofx-package 
+"_PACKAGE"
 NULL

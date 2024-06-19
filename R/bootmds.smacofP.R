@@ -35,21 +35,25 @@
 #' resboot <- bootmds(fit, data, method.dat = "euclidean", nrep = 10) #run for more nrep
 #' resboot
 #' plot(resboot) #see ?smacof::bootmds for more on the plot method
-#'
-#' fit2 <- powerStressMin(diss,kappa=1.5,lambda=1.5,itmax=1000) ## 2D power stress MDS
-#' set.seed(123)
-#' resboot2 <- bootmds(fit2, data, method.dat = "euclidean", nrep = 10)
-#' plot(resboot)
 #' 
 bootmds.smacofP <- function(object, data, method.dat = "pearson", nrep = 100, alpha = 0.05, 
                             verbose = FALSE, ...)
     #TODO add an itmax argument?
 {
+    calli <- match.call()
     if(any(class(object)=="smacofB"))
     {
         class(object) <- c("smacofB",class(object))
     } else stop("MDS object must inherit from smacofB.")
+    #ocall <- object$call
+    #ocall$type <- object$type
+    #ocall$weightmat <- object$weightmat
+    #ocall$init <- object$init
+    #ocall$ndim <- object$ndim
+    #if(!is.numeric(ocall$itmax)) ocall$itmax <- object$niter+1000 else ocall$itmax <- object$call$itmax
+    #object$fit$call <- ocall
     out <- smacof::bootmds(object,data=data,method.dat=method.dat,nrep=nrep,alpha=alpha,verbose=verbose,...)
+    out$call <- calli
     class(object) <- class(object)[-1]
     out
  }

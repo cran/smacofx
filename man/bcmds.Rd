@@ -12,12 +12,15 @@ bcmds(
   mu = 1,
   lambda = 1,
   rho = 0,
+  type = "ratio",
   ndim = 2,
+  weightmat = 1 - diag(nrow(delta)),
   itmax = 2000,
   init = NULL,
   verbose = 0,
   addD0 = 1e-04,
-  principal = FALSE
+  principal = FALSE,
+  normconf = FALSE
 )
 
 bcStressMin(
@@ -25,12 +28,15 @@ bcStressMin(
   mu = 1,
   lambda = 1,
   rho = 0,
+  type = "ratio",
   ndim = 2,
+  weightmat = 1 - diag(nrow(delta)),
   itmax = 2000,
   init = NULL,
   verbose = 0,
   addD0 = 1e-04,
-  principal = FALSE
+  principal = FALSE,
+  normconf = FALSE
 )
 
 bcstressMin(
@@ -38,12 +44,15 @@ bcstressMin(
   mu = 1,
   lambda = 1,
   rho = 0,
+  type = "ratio",
   ndim = 2,
+  weightmat = 1 - diag(nrow(delta)),
   itmax = 2000,
   init = NULL,
   verbose = 0,
   addD0 = 1e-04,
-  principal = FALSE
+  principal = FALSE,
+  normconf = FALSE
 )
 
 boxcoxmds(
@@ -51,12 +60,15 @@ boxcoxmds(
   mu = 1,
   lambda = 1,
   rho = 0,
+  type = "ratio",
   ndim = 2,
+  weightmat = 1 - diag(nrow(delta)),
   itmax = 2000,
   init = NULL,
   verbose = 0,
   addD0 = 1e-04,
-  principal = FALSE
+  principal = FALSE,
+  normconf = FALSE
 )
 }
 \arguments{
@@ -66,9 +78,13 @@ boxcoxmds(
 
 \item{lambda}{lambda parameter. Must be larger than 0.}
 
-\item{rho}{the rho parameter, power for the weights (the easiest).}
+\item{rho}{the rho parameter, power for the weights (called nu in the original article).}
+
+\item{type}{what type of MDS to fit. Only "ratio" currently.}
 
 \item{ndim}{the dimension of the configuration}
+
+\item{weightmat}{a matrix of finite weights. Not implemented.}
 
 \item{itmax}{number of optimizing iterations, defaults to 2000.}
 
@@ -79,6 +95,8 @@ boxcoxmds(
 \item{addD0}{a small number that's added for D(X)=0 for numerical evaluation of worst fit (numerical reasons, see details). If addD0=0 the normalized stress for mu!=0 and mu+lambda!=0 is correct, but will give useless normalized stress for mu=0 or mu+lambda!=0.}
 
 \item{principal}{If 'TRUE', principal axis transformation is applied to the final configuration}
+
+\item{normconf}{normalize the configuration to sum(delta^2)=1 (as in the power stresses). Default is FALSE. Note that then the distances in confdist do not match manually calculated ones.}
 }
 \value{
 an object of class 'bcmds' (also inherits from 'smacofP'). It is a list with the components
@@ -95,7 +113,7 @@ an object of class 'bcmds' (also inherits from 'smacofP'). It is a list with the
 \item niter: Number of iterations
 \item nobj: Number of objects
 \item pars: hyperparameter vector theta
-\item weightmat:  delta^rho
+\item weightmat: 1-diagonal matrix. For compatibility with smacofP classes. 
 \item parameters, pars, theta: The parameters supplied
 \item call the call
 }
@@ -108,7 +126,7 @@ and some additional components
 }
 }
 \description{
-This function minimizes the Box-Cox Stress of Chen & Buja (2013) via gradient descent. This is a ratio metric scaling method. The transformations are not straightforward to interpret but mu is associated with fitted distances in the configuration and lambda with the dissimilarities. Concretely for fitted distances (attraction part) it is BC_{mu+lambda}(d(X)) and for the repulsion part it is delta^lambdaBC_{mu}(d(X)) with BC being the one-parameter Box Cox transformation.
+This function minimizes the Box-Cox Stress of Chen & Buja (2013) via gradient descent. This is a ratio metric scaling method. The transformations are not straightforward to interpret but mu is associated with fitted distances in the configuration and lambda with the dissimilarities. Concretely for fitted distances (attraction part) it is \eqn{BC_{mu+lambda}(d(X))} and for the repulsion part it is \eqn{delta^lambda BC_{mu}(d(X))} with BC being the one-parameter Box-Cox transformation.
 }
 \details{
 For numerical reasons with certain parameter combinations, the normalized stress uses a configuration as worst result where every d(X) is 0+addD0. The same number is not added to the delta so there is a small inaccuracy of the normalized stress (but negligible if min(delta)>>addD0). Also, for mu<0 or mu+lambda<0 the normalization cannot generally be trusted (in the worst case of D(X)=0 one would have an 0^(-a)).

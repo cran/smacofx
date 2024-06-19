@@ -3,13 +3,16 @@
 #' This function minimizes the Local MDS Stress of Chen & Buja (2006) via gradient descent. This is a ratio metric scaling method. 
 #' 
 #' @param delta dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object
-#' @param init initial configuration. If NULL a classical scaling solution is used. 
-#' @param ndim the dimension of the configuration
 #' @param k the k neighbourhood parameter
 #' @param tau the penalty parameter (suggested to be in [0,1]) 
+#' @param type what type of MDS to fit. Only "ratio" currently. 
+#' @param init initial configuration. If NULL a classical scaling solution is used. 
+#' @param ndim the dimension of the configuration
+#' @param weightmat a matrix of finite weights. Not implemented.
 #' @param itmax number of optimizing iterations, defaults to 5000.
 #' @param verbose prints info if > 0 and progress if > 1.
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
+#' @param normconf normalize the configuration to sum(delta^2)=1 (as in the power stresses). Note that then the distances in confdist do not match the manually calculated ones.
 #'
 #' @author Lisha Chen & Thomas Rusch
 #'
@@ -53,22 +56,23 @@
 #' plot(res)
 #' 
 #' @export
-lmds <- function(delta,init=NULL,ndim=2,k=2,tau=1,
-                   itmax=5000,verbose=0,principal=FALSE)
+lmds <- function(delta,k=2,tau=1,type="ratio",ndim=2,weightmat=1-diag(nrow(delta)),
+                   itmax=5000,init=NULL,verbose=0,principal=FALSE,normconf=FALSE)
 {
     if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
     if(!isSymmetric(delta)) stop("Delta is not symmetric.\n")
     if(verbose>0) cat("Minimizing lmds with tau=",tau,"k=",k,"\n")
-    labos <- rownames(delta) 
     Do <- delta
+    n <- nrow(Do)
+    if(is.null(rownames(delta))) rownames(delta) <- 1:n
+    labos <- rownames(delta)
+    if (ndim > (n - 1)) stop("Maximum number of dimensions is n-1!")
     X1 <- init
     lambda <- 1
     mu <- 1
     nu <- 0
     niter <- itmax
-    d <- ndim
-    n <- nrow(Do)
-
+    d <- ndim   
     #New: make the neighbourhood graph adjacency matrix Inb
     Daux <- apply(Do,2,sort)[k+1,]
     Inb <- ifelse(Do>Daux, 0, 1)
@@ -206,10 +210,10 @@ while ( stepsize > 1E-5 && i < niter)
                                         #s1n <- (s1e-normop)/(normo0-normop) #normalized stress
   s1n <- 1-s1e/normop
     
-  result <- list()
+  result <- list()  
   result$delta <- stats::as.dist(Do)
   result$dhat <- stats::as.dist(Do)
-  #X1 <- X1/enorm(X1) 
+  if(isTRUE(normconf)) X1 <- X1/enorm(X1) 
   if (principal) {
         X1_svd <- svd(X1)
         X1 <- X1 %*% X1_svd$v

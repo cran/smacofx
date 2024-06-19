@@ -39,7 +39,7 @@ multiscale(
 \item{principal}{If ‘TRUE’, principal axis transformation is applied to the final configuration}
 }
 \value{
-a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 \itemize{
 \item delta: Observed dissimilarities
 \item tdelta: Observed explicitly transformed (log) dissimilarities, normalized
@@ -58,7 +58,7 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It 
 }
 }
 \description{
-An implementation for maximum likelihood MDS aka multiscale that minimizes the multiscale stress by majorization with ratio and interval optimal scaling. Uses a repeat loop.
+An implementation for maximum likelihood MDS aka multiscale that minimizes the multiscale stress by majorization with ratio and interval optimal scaling. Uses a repeat loop. Note that since this done via the route of r-sytress, the multiscale stress is approximate and only accuarte for kappa->0.
 }
 \section{Warning}{
  The input delta will internally get transformed to the log scale, so make sure that log(delta)>=0 otherwise it throws an error. It is often a good idea to use 1+delta in this case.

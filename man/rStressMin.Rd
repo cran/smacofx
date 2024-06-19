@@ -87,7 +87,7 @@ rstress(
 \item{principal}{If 'TRUE', principal axis transformation is applied to the final configuration}
 }
 \value{
-a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 \itemize{
 \item delta: Observed, untransformed dissimilarities
 \item tdelta: Observed explicitly transformed dissimilarities, normalized
@@ -118,5 +118,5 @@ plot(res)
 
 }
 \seealso{
-\code{\link{smacofSym}}
+\code{\link[smacof]{smacofSym}}
 }

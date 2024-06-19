@@ -56,9 +56,4 @@ resboot <- bootmds(fit, data, method.dat = "euclidean", nrep = 10) #run for more
 resboot
 plot(resboot) #see ?smacof::bootmds for more on the plot method
 
-fit2 <- powerStressMin(diss,kappa=1.5,lambda=1.5,itmax=1000) ## 2D power stress MDS
-set.seed(123)
-resboot2 <- bootmds(fit2, data, method.dat = "euclidean", nrep = 10)
-plot(resboot)
-
 }

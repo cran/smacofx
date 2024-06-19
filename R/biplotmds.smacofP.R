@@ -37,7 +37,7 @@
 biplotmds.smacofP <- function(object,extvar,scale=TRUE)
 {
     oldclass <- class(object)
-    class(object) <- class(object)[3]
+    if(any(class(object)%in% "smacof")) class(object) <- "smacof"
     out <- smacof::biplotmds(object,extvar=extvar,scale=scale)
     out$conf <- object$conf
     class(object) <- oldclass

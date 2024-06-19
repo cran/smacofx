@@ -39,7 +39,7 @@ powerStressFast(
 \item{verbose}{should iteration output be printed; if > 1 then yes}
 }
 \value{
-a 'smacofP' object (inheriting from 'smacofB', see \code{\link{smacofSym}}). It is a list with the components
+a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 \itemize{
 \item delta: Observed dissimilarities, not normalized
 \item obsdiss: Observed dissimilarities, normalized 
@@ -74,5 +74,5 @@ plot(res)
 
 }
 \seealso{
-\code{\link{smacofSym}}
+\code{\link[smacof]{smacofSym}}
 }
