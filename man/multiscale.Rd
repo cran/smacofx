@@ -13,7 +13,7 @@ multiscale(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  kappa = 0.1,
+  kappa = 0.01,
   principal = FALSE
 )
 }
@@ -44,8 +44,8 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym
 \item delta: Observed dissimilarities
 \item tdelta: Observed explicitly transformed (log) dissimilarities, normalized
 \item dhat: Explicitly transformed dissimilarities (dhats), optimally scaled and normalized 
-\item confdist: Configuration dissimilarities, NOT normalized 
-\item conf: Matrix of fitted configuration, NOT normalized
+\item confdist: Transformed configuration distances
+\item conf: Matrix of fitted configuration
 \item stress: Default stress  (stress 1; sqrt of explicitly normalized stress)
 \item spp: Stress per point
 \item ndim: Number of dimensions

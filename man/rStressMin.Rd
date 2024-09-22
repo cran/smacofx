@@ -92,7 +92,7 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym
 \item delta: Observed, untransformed dissimilarities
 \item tdelta: Observed explicitly transformed dissimilarities, normalized
 \item dhat: Explicitly transformed dissimilarities (dhats), optimally scaled and normalized 
-\item confdist: Configuration dissimilarities
+\item confdist: Transformed fitted configuration distances
 \item conf: Matrix of fitted configuration
 \item stress: Default stress  (stress 1; sqrt of explicitly normalized stress)
 \item spp: Stress per point 

@@ -25,7 +25,7 @@
 #' \item delta: Observed, untransformed dissimilarities
 #' \item tdelta: Observed explicitly transformed dissimilarities, normalized
 #' \item dhat: Explicitly transformed dissimilarities (dhats), optimally scaled and normalized 
-#' \item confdist: Configuration dissimilarities
+#' \item confdist: Transformed configuration distances
 #' \item conf: Matrix of fitted configuration
 #' \item stress: Default stress  (stress 1; sqrt of explicitly normalized stress)
 #' \item spp: Stress per point 
@@ -140,10 +140,10 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
     xold <- xold / enorm (xold) 
     nn <- diag (n)
     dold <- sqdist (xold) #squared distances
-    doldpow <- mkPower(dold,kappa/2)#distances^kappa
+    doldpow <- mkPower(dold,kappa/2)# distances^kappa
     weightmat[doldpow>tau] <- 0 ##CCA penalty
     ##first optimal scaling
-    eold <- as.dist(sqrt(dold))
+    eold <- as.dist(mkPower(dold,r))
     dhat <- smacof::transform(eold, disobj, w = as.dist(weightmat), normq = normi)
     dhatt <- dhat$res #I need the structure here to reconstruct the delta; alternatively turn all into vectors? - checked how they do it in smacof
     dhatd <- structure(dhatt, Size = n, call = quote(as.dist.default(m=b)), class = "dist", Diag = FALSE, Upper = FALSE)
@@ -181,7 +181,7 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
       weightmat[!is.finite(weightmat)] <- 0
       weightmat[dnewpow>tau] <- 0
       ##optimal scaling
-      e <- as.dist(sqrt(dnew)) #I need the dist(x) here for interval
+      e <- as.dist(mkPower(dnew,r)) #I need the dist(x) here for interval
       dhat2 <- smacof::transform(e, disobj, w = as.dist(weightmat), normq = normi)  ## dhat update
       dhatt <- dhat2$res 
       dhatd <- structure(dhatt, Size = n, call = quote(as.dist.default(m=b)), class = "dist", Diag = FALSE, Upper = FALSE)

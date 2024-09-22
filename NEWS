@@ -1,3 +1,7 @@
+Version 1.6-1
+
+- Fixed a bug in the optimal scaling for the disparities. 
+
 Version 1.5-1
 
 - Added a weightmat and a type argument to bcmds and lmds. Not of consequence for the fit, but to streamline UI. Changed $weightmat slot in bcmds to diagonal matrix. 

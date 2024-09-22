@@ -19,7 +19,7 @@
 #' \item delta: Observed, untransformed dissimilarities
 #' \item tdelta: Observed explicitly transformed dissimilarities, normalized
 #' \item dhat: Explicitly transformed dissimilarities (dhats), optimally scaled and normalized 
-#' \item confdist: Configuration dissimilarities
+#' \item confdist: Transformed fitted configuration distances
 #' \item conf: Matrix of fitted configuration
 #' \item stress: Default stress  (stress 1; sqrt of explicitly normalized stress)
 #' \item spp: Stress per point 
@@ -102,7 +102,8 @@ rStressMin <- function (delta, r=0.5, type=c("ratio","interval","ordinal"), ties
     nn <- diag (n)
     dold <- sqdist (xold)
    ##first optimal scaling
-    eold <- as.dist(sqrt(dold))
+    ## eold <- as.dist(sqrt(dold)) #was bug prior to 1.6-1
+    eold <- as.dist(mkPower(dold,r))
     dhat <- smacof::transform(eold, disobj, w = as.dist(weightmat), normq = normi)
     dhatt <- dhat$res #I need the structure here to reconstruct the delta; alternatively turn all into vectors? - checked how they do it in smacof
     dhatd <- structure(dhatt, Size = n, call = quote(as.dist.default(m=b)), class = "dist", Diag = FALSE, Upper = FALSE)
@@ -131,7 +132,8 @@ rStressMin <- function (delta, r=0.5, type=c("ratio","interval","ordinal"), ties
       xnew <- xnew / enorm (xnew)
       dnew <- sqdist (xnew)
       ##optimal scaling
-      e <- as.dist(sqrt(dnew)) #I need the dist(x) here for interval
+      #e <- as.dist(sqrt(dnew)) #I need the dist(x) here for interval, #was bug prior to 1.6-1
+      e <- as.dist(mkPower(dnew,r)) 
       dhat2 <- smacof::transform(e, disobj, w = as.dist(weightmat), normq = normi)  ## dhat update
       dhatt <- dhat2$res 
       dhatd <- structure(dhatt, Size = n, call = quote(as.dist.default(m=b)), class = "dist", Diag = FALSE, Upper = FALSE)
