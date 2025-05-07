@@ -58,19 +58,6 @@ elscal <- function (delta, type=c("ratio","interval"), weightmat, init=NULL, ndi
     if (trans=="ratio"){
     trans <- "none"
     }
-    ## ordinal makes no sense in elastic scaling imo
-   # else if (trans=="ordinal" & ties=="primary"){
-   # trans <- "ordinalp"
-   # typo <- "ordinal (primary)"
-   #} else if(trans=="ordinal" & ties=="secondary"){
-   # trans <- "ordinals"
-   # typo <- "ordinal (secondary)"
-  #} else if(trans=="ordinal" & ties=="tertiary"){
-  #  trans <- "ordinalt"
-  #  typo <- "ordinal (tertiary)"
-  #} else if(trans=="spline"){
-  #  trans <- "mspline"
-  #}
     if(verbose>0) cat(paste("Minimizing",type,"elastic scaling stress","\n"))    
     n <- nrow (delta)
     p <- ndim
@@ -78,7 +65,6 @@ elscal <- function (delta, type=c("ratio","interval"), weightmat, init=NULL, ndi
     stop("Maximum number of dimensions is n-1!")
     if(is.null(rownames(delta))) rownames(delta) <- 1:n 
     labos <- rownames(delta) #labels
-    
     weightmatorig <- weightmat #back up weightmat 
     deltaorig <- delta #backup delta
     weightmato <- weightmat
@@ -86,9 +72,7 @@ elscal <- function (delta, type=c("ratio","interval"), weightmat, init=NULL, ndi
     delta <- delta / enorm (delta, weightmat)
     weightmat <- weightmato/mkPower(delta,2) #elastic weighting #1
     weightmat[!is.finite(weightmat)] <- 0
-    disobj <- smacof::transPrep(as.dist(delta), trans = trans, spline.intKnots = 2, spline.degree = 2)#spline.intKnots = spline.intKnots, spline.degree = spline.degree) #FIXME: only works with dist() style object 
-    ## Add an intercept to the spline base transformation
-    #if (trans == "mspline") disobj$base <- cbind(rep(1, nrow(disobj$base)), disobj$base)
+    disobj <- smacof::transPrep(as.dist(delta), trans = trans, spline.intKnots = 2, spline.degree = 2)
     deltaold <- delta
     itel <- 1
     ##Starting Configs
@@ -195,7 +179,7 @@ elscal <- function (delta, type=c("ratio","interval"), weightmat, init=NULL, ndi
     resmat<-spoint$resmat
     rss <- sum(spoint$resmat[lower.tri(spoint$resmat)])
     spp <- spoint$spp
-    #spp <- colMeans(resmat)
+    if (verbose > 0 && itel == itmax) warning("Iteration limit reached! You may want to increase the itmax argument!")
     if (principal) {
         xnew_svd <- svd(xnew)
         xnew <- xnew %*% xnew_svd$v

@@ -12,6 +12,7 @@ lmds(
   ndim = 2,
   weightmat = 1 - diag(nrow(delta)),
   itmax = 5000,
+  acc = 1e-05,
   init = NULL,
   verbose = 0,
   principal = FALSE,
@@ -32,6 +33,8 @@ lmds(
 \item{weightmat}{a matrix of finite weights. Not implemented.}
 
 \item{itmax}{number of optimizing iterations, defaults to 5000.}
+
+\item{acc}{accuracy (lowest stepsize). Defaults to 1e-5.}
 
 \item{init}{initial configuration. If NULL a classical scaling solution is used.}
 

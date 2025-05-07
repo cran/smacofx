@@ -247,6 +247,15 @@ plot.smacofP <- function (x, plot.type = "confplot", plot.dim = c(1, 2), bubscal
             #ir1 <- stats::isoreg(x=dhats1,y=confd1)
             #dhatscal+(ir1$yf[x$iord]-dhatsscal)    
         }
+        if(x$type=="mspline")
+        {
+            #TODO: change here if we have objects with other parameters. First one must always be the configuration distance transformation (usually kappa, r, or mu) 
+            expo <- switch(names(disttrans),
+                       r=2*disttrans,
+                       kappa=disttrans
+                       )                    
+            scallm <- stats::coef(stats::lm(confd1~I(dhats1^expo),weights=wm))
+        }
         #scallm <- coef(lm(confd1~-1+dhats1,weights=wm))
         #scallm <- c(0,scallm)
         #cat(scallm,"\n")

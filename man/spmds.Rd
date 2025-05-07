@@ -5,7 +5,11 @@
 \alias{smds}
 \alias{so_spmds}
 \alias{so_smds}
-\title{Sparsified (POST-) Multidimensional Scaling (SPMDS or SMDS) either as self-organizing or not}
+\alias{eCLCA}
+\alias{eCLPCA}
+\alias{so_eCLPCA}
+\alias{so_eCLCA}
+\title{Extended Curvilinear (Power) Component Analysis aka Sparsified (POST-) Multidimensional Scaling (SPMDS or SMDS) either as self-organizing or not}
 \usage{
 spmds(
   delta,
@@ -21,7 +25,10 @@ spmds(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2,
+  traceIt = FALSE
 )
 
 smds(
@@ -35,7 +42,10 @@ smds(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  traceIt = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
 )
 
 so_spmds(
@@ -53,7 +63,9 @@ so_spmds(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
 )
 
 so_smds(
@@ -68,7 +80,83 @@ so_smds(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+eCLCA(
+  delta,
+  tau = stats::quantile(delta, 0.9),
+  type = "ratio",
+  ties = "primary",
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  traceIt = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+eCLPCA(
+  delta,
+  lambda = 1,
+  kappa = 1,
+  nu = 1,
+  tau,
+  type = "ratio",
+  ties = "primary",
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2,
+  traceIt = FALSE
+)
+
+so_eCLPCA(
+  delta,
+  kappa = 1,
+  lambda = 1,
+  nu = 1,
+  tau = max(delta),
+  epochs = 10,
+  type = "ratio",
+  ties = "primary",
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+so_eCLCA(
+  delta,
+  tau = max(delta),
+  epochs = 10,
+  type = "ratio",
+  ties = "primary",
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
 )
 }
 \arguments{
@@ -82,7 +170,7 @@ so_smds(
 
 \item{tau}{the boundary/neighbourhood parameter(s) (called lambda in the original paper). For 'spmds' and 'smds' it is supposed to be a numeric scalar (if a sequence is supplied the maximum is taken as tau) and all the transformed fitted distances exceeding tau are set to 0 via the weightmat (assignment can change between iterations). It defaults to the 90\% quantile of delta. For 'so_spmds' tau is supposed to be either a user supplied decreasing sequence of taus or if a scalar the maximum tau from which a decreasing sequence of taus is generated automatically as 'seq(from=tau,to=tau/epochs,length.out=epochs)' and then used in sequence.}
 
-\item{type}{what type of MDS to fit. Currently one of "ratio", "interval" or "ordinal". Default is "ratio".}
+\item{type}{what type of MDS to fit. Currently one of "ratio", "interval", "mspline" or "ordinal". Default is "ratio".}
 
 \item{ties}{the handling of ties for ordinal (nonmetric) MDS. Possible are "primary" (default), "secondary" or "tertiary".}
 
@@ -96,9 +184,15 @@ so_smds(
 
 \item{itmax}{maximum number of iterations. Default is 10000.}
 
-\item{verbose}{should iteration output be printed; if > 1 then yes}
+\item{verbose}{should fitting information be printed; if > 0 then yes}
 
 \item{principal}{If 'TRUE', principal axis transformation is applied to the final configuration}
+
+\item{spline.degree}{Degree of the spline for ‘mspline’ MDS type}
+
+\item{spline.intKnots}{Number of interior knots of the spline for ‘mspline’ MDS type}
+
+\item{traceIt}{save the iteration progress in a vector (stress values)}
 
 \item{epochs}{for 'so_spmds' and tau being scalar, it gives the number of passes through the data. The sequence of taus created is 'seq(tau,tau/epochs,length.out=epochs)'. If tau is of length >1, this argument is ignored.}
 }
@@ -119,14 +213,15 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym
 \item type: Type of MDS model
 \item weightmat: weighting matrix as supplied
 \item stress.m: Default stress (stress-1^2)
-\item tweightmat: transformed weighting matrix; it is weightmat but containing all the 0s for the distances set to 0. 
+\item tweightmat: transformed weighting matrix; it is weightmat but containing all the 0s for the distances set to 0.
+\item trace: if 'traceIt=TRUE' a vector with the iteration progress
 }
 }
 \description{
-An implementation of a sparsified version of (POST-)MDS by pseudo-majorization with ratio, interval and ordinal optimal scaling for dissimilarities and optional power transformations. This is inspired by curvilinear component analysis but works differently: It finds an initial weightmatrix where w_ij(X^0)=0 if d_ij(X^0)>tau and fits a POST-MDS with these weights. Then in each successive iteration step, the weightmat is recalculated so that w_ij(X^(n+1))=0 if d_ij(X^(n+1))>tau.
+An implementation of extended CLPCA which is a sparsified version of (POST-)MDS by quasi-majorization with ratio, interval and ordinal optimal scaling for dissimilarities and optional power transformations. This is inspired by curvilinear component analysis but works differently: It finds an initial weightmatrix where w_ij(X^0)=0 if d_ij(X^0)>tau and fits a POST-MDS with these weights. Then in each successive iteration step, the weightmat is recalculated so that w_ij(X^(n+1))=0 if d_ij(X^(n+1))>tau.
 }
 \details{
-There is a wrapper 'smds' where the exponents are 1, which is standard SMDS but extend to allow optimal scaling. The neighborhood parameter tau is kept fixed in 'spmds' and 'smds'. The functions 'so_spmds' and 'so_smds' implement a self-organising principle, where the SMDS is repeatedly fitted for a decreasing sequence of taus.
+There are a wrappers 'smds' and 'eCLCA'  where the exponents are 1. The neighborhood parameter tau is kept fixed in 'spmds', 'smds', 'eCLCA' and 'eCLPCA'. The functions 'so_spmds', 'so_eCLPCA' and 'so_smds', 'so_eCLCA' implement a self-organising principle, where the model is repeatedly fitted for a decreasing sequence of taus.
 
 
 The solution is found by "quasi-majorization", which means that the majorization is only real majorization once the weightmat no longer changes. This typically happens after a few iterations. Due to that it can be that in the beginning the stress may not decrease monotonically and that there's a chance it might never. 
@@ -138,7 +233,11 @@ In the standard functions 'spmds' and 'smds' we keep tau fixed throughout. This 
 \examples{
 dis<-smacof::morse
 res<-spmds(dis,type="interval",kappa=2,lambda=2,tau=0.3,itmax=100) #use higher itmax
-res2<-smds(dis,type="interval",tau=0.3,itmax=500) #use higher itmax
+res2<-smds(dis,type="interval",tau=0.3,itmax=500,traceIt=TRUE) #use higher itmax
+#Aliases
+resa<-eCLPCA(dis,type="interval",kappa=2,lambda=2,tau=0.3,itmax=100) #use higher itmax
+res2a<-eCLCA(dis,type="interval",tau=0.3,itmax=500,traceIt=TRUE) #use higher itmax
+
 res
 res2
 summary(res)
@@ -150,6 +249,10 @@ par(oldpar)
 ##which d_{ij}(X)^kappa exceeded tau at convergence (i.e., have been set to 0)?
 res$tweightmat
 res2$tweightmat
+
+# We use Quasi-Majorization
+res2$trace
+
 
 \donttest{
 ## Self-organizing map style (as in the clca publication)

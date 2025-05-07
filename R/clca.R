@@ -37,7 +37,7 @@
 #'
 #'
 #' @details
-#' This implements CCA as in Demartines & Herault (1997). A different take on the ideas of curvilinear compomnent analysis is available in the experimental functions \code{\link{spmds}} and \code{\link{spmds}}.  
+#' This implements CCA as in Desmartines & Herault (1997). A different take on the ideas of curvilinear compomnent analysis is available in the experimental functions \code{\link{spmds}} and \code{\link{spmds}}.  
 #' 
 #'  
 #' @importFrom stats dist as.dist quantile

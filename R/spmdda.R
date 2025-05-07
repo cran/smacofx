@@ -1,8 +1,8 @@
-#' Sparse (POST-)Multidimensional Distance Analysis (SPMDDA or SMDDA) either as self-organizing or not 
+#' Extended Curvilinear (Power) Distance Analysis (eCLPDA or eCLDA) aka Sparse (POST-)Multidimensional Distance Analysis (SPMDDA or SMDDA) either as self-organizing or not 
 #'
 #' An implementation of a sparsified version of (POST-)MDS by pseudo-majorization with ratio, interval and ordinal optimal scaling for geodesic distances and optional power transformations. This is inspired by curvilinear distance analysis but works differently: It finds an initial weightmatrix where w_ij(X^0)=0 if d_ij(X^0)>tau and fits a POST-MDS with these weights. Then in each successive iteration step, the weightmat is recalculated so that w_ij(X^(n+1))=0 if d_ij(X^(n+1))>tau. Right now the zero weights are not found by the correct optimization, but we're working on that. 
 #'
-#' In 'spmdda' the logic is that we first transform to geodesic distance, then apply the explicit power transformation and then the implicit optimal scaling. There is a wrapper 'smdda' where the exponents are 1, which is standard SMDDA but extend to allow optimal scaling. The neighborhood parameter tau is kept fixed in 'spmdda' and 'smdda'. The functions 'so_spmdda' and 'so_smdda' implement a self-organising principle where the is repeatedly fitted for a decreasing sequence of taus.
+#' In 'spmdda' the logic is that we first transform to geodesic distance, then apply the explicit power transformation and then the implicit optimal scaling. There is a wrapper 'smdda', 'eCLDA' where the exponents are 1, which is standard SMDDA or eCLPDA but extend to allow optimal scaling. The neighborhood parameter tau is kept fixed in 'spmdda', 'eCLPDA' and 'smdda', 'eCLDA'. The functions 'so_spmdda', 'so_eCLPDA' and 'so_smdda', 'so_eCLDA' implement a self-organising principle where the is repeatedly fitted for a decreasing sequence of taus.
 #' 
 #' @param delta dist object or a symmetric, numeric data.frame or matrix of distances
 #' @param lambda exponent of the power transformation of the dissimilarities; defaults to 1, which is also the setup of 'smdda'
@@ -13,17 +13,20 @@
 #' @param k Number of shortest dissimilarities retained for a point. If both 'epsilon' and 'k' are given, 'epsilon' will be used.
 #' @param path Method used in 'stepacross' to estimate the shortest path, with alternatives '"shortest"' and '"extended"'.
 #' @param fragmentedOK  What to do if dissimilarity matrix is fragmented. If 'TRUE', analyse the largest connected group, otherwise stop with error.
-#' @param type what type of MDS to fit. Currently one of "ratio", "interval" or "ordinal". Default is "ratio".
+#' @param type what type of MDS to fit. Currently one of "ratio", "interval","ordinal" or "mspline". Default is "ratio".
 #' @param ties the handling of ties for ordinal (nonmetric) MDS. Possible are "primary" (default), "secondary" or "tertiary".
 #' @param weightmat a matrix of finite weights. 
 #' @param init starting configuration
 #' @param ndim dimension of the configuration; defaults to 2
 #' @param acc numeric accuracy of the iteration. Default is 1e-6.
 #' @param itmax maximum number of iterations. Default is 10000.
-#' @param verbose should iteration output be printed; if > 1 then yes
+#' @param verbose should fitting infomation be printed; if > 0 then yes
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
 #' @param epochs for 'so_pclca' and tau being scalar, it gives the number of passes through the data. The sequence of taus created is 'seq(tau,tau/epochs,length.out=epochs)'. If tau is of length >1, this argument is ignored.
-#'
+#' @param traceIt save the iteration progress in a vector (stress values)
+#' @param spline.degree Degree of the spline for ‘mspline’ MDS type
+#' @param spline.intKnots Number of interior knots of the spline for ‘mspline’ MDS type
+#' 
 #' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 #' \itemize{
 #' \item delta: Observed, untransformed dissimilarities
@@ -40,7 +43,8 @@
 #' \item type: Type of MDS model
 #' \item weightmat: weighting matrix as supplied
 #' \item stress.m: Default stress (stress-1^2)
-#' \item tweightmat: transformed weighting matrix; it is weightmat but containing all the 0s for the distances set to 0. 
+#' \item tweightmat: transformed weighting matrix; it is weightmat but containing all the 0s for the distances set to 0.
+#' \item trace: if 'traceIt=TRUE' a vector with the iteration progress
 #'}
 #'
 #'
@@ -66,6 +70,10 @@
 #' coef(res)
 #'
 #' res2<-smdda(dis,type="interval",tau=0.4,epsilon=1,itmax=500) #use higher itmax
+#' #aliases:
+#' resa<-eCLPDA(dis,kappa=2,lambda=2,tau=0.4,k=5,itmax=500) #use higher itmax
+#' res2a<-eCLDA(dis,type="interval",tau=0.4,epsilon=1,itmax=500) #use higher itmax
+#' 
 #' res2
 #' summary(res)
 #' oldpar<-par(mfrow=c(1,2))
@@ -87,10 +95,10 @@
 #' }
 #' 
 #' @export
-spmdda <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="primary", epsilon, k, path="shortest", fragmentedOK=FALSE, weightmat=1-diag(nrow(delta)), init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal=FALSE) {
+spmdda <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="primary", epsilon, k, path="shortest", fragmentedOK=FALSE, weightmat=1-diag(nrow(delta)), init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal=FALSE, spline.degree = 2, spline.intKnots = 2, traceIt=FALSE) {
     #Isomap distances
     cc <- match.call()
-    type <- match.arg(type, c("ratio", "interval", "ordinal"),several.ok = FALSE)
+    type <- match.arg(type, c("ratio", "interval", "ordinal","mspline"),several.ok = FALSE)
     #Conditions for when epsilon or k are given
     if (!missing(epsilon) && !missing(k)) message("Both epsilon and k given, using epsilon.") 
     if (missing(epsilon) && missing(k)) epsilon <- stats::quantile(delta,0.5) 
@@ -102,7 +110,7 @@ spmdda <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="pri
     isocrit <- attr(delta,"criterion")
     isocritval <- attr(delta,"critval")
     if(verbose>0) cat(paste("Fitting",type,"spmdda with lambda=",lambda, "kappa=",kappa,"nu=",nu, "tau=",tau,"and",isocrit,"=", isocritval,"\n"))
-    out <- spmds(delta=delta, lambda=lambda, kappa=kappa, nu=nu, tau=tau, type=type, ties=ties, weightmat=weightmat, init=init, ndim=ndim, acc=acc, itmax=itmax, verbose=verbose-1, principal=principal)
+    out <- spmds(delta=delta, lambda=lambda, kappa=kappa, nu=nu, tau=tau, type=type, ties=ties, weightmat=weightmat, init=init, ndim=ndim, acc=acc, itmax=itmax, verbose=verbose-1, principal=principal,traceIt=traceIt, spline.degree=spline.degree, spline.intKnots=spline.intKnots)
     #postprocess
     out$model= "SPMDDA"
     out$call <- cc
@@ -116,11 +124,12 @@ spmdda <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="pri
 
 #' @rdname spmdda
 #' @export
-smdda <- function(delta, tau=stats::quantile(delta,0.9), type=c("ratio"), ties="primary", epsilon, k, path="shortest", fragmentedOK=FALSE, weightmat=1-diag(nrow(delta)), init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal=FALSE) {
+smdda <- function(delta, tau=stats::quantile(delta,0.9), type="ratio", ties="primary", epsilon, k, path="shortest", fragmentedOK=FALSE, weightmat=1-diag(nrow(delta)), init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal=FALSE,traceIt=FALSE,spline.degree = 2, spline.intKnots = 2) {
     cc <- match.call()
+    type <- match.arg(type, c("ratio", "interval", "ordinal","mspline"),several.ok = FALSE)
     if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
     if(!isSymmetric(delta)) stop("delta is not symmetric.\n")
-    out <- spmdda(delta=delta, lambda=1, kappa=1, nu=1, tau=tau, type=type, ties=ties, epsilon=epsilon, k=k, path=path, fragmentedOK=fragmentedOK, weightmat=weightmat, init=init, ndim=ndim, acc=acc, itmax=itmax, verbose=verbose, principal=principal)
+    out <- spmdda(delta=delta, lambda=1, kappa=1, nu=1, tau=tau, type=type, ties=ties, epsilon=epsilon, k=k, path=path, fragmentedOK=fragmentedOK, weightmat=weightmat, init=init, ndim=ndim, acc=acc, itmax=itmax, verbose=verbose, principal=principal,traceIt=traceIt, spline.degree=spline.degree, spline.intKnots=spline.intKnots)
     out$model <- "SMDDA"
     out$call <- cc
     paro <- out$parameters[-(1:3)]
@@ -130,8 +139,9 @@ smdda <- function(delta, tau=stats::quantile(delta,0.9), type=c("ratio"), ties="
 
 #' @rdname spmdda
 #' @export
-so_spmdda <- function(delta, kappa=1, lambda=1, nu=1, tau=max(delta), epochs=10, type=c("ratio"), ties="primary", epsilon, k, path="shortest", fragmentedOK=FALSE, weightmat=1-diag(nrow(delta)), init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal=FALSE) {
+so_spmdda <- function(delta, kappa=1, lambda=1, nu=1, tau=max(delta), epochs=10, type=c("ratio"), ties="primary", epsilon, k, path="shortest", fragmentedOK=FALSE, weightmat=1-diag(nrow(delta)), init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal=FALSE,spline.degree = 2, spline.intKnots = 2) {
     cc <- match.call()
+    type <- match.arg(type, c("ratio", "interval", "ordinal","mspline"),several.ok = FALSE)
     if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
     if(!isSymmetric(delta)) stop("delta is not symmetric.\n")
     if(length(tau)<2)
@@ -145,7 +155,7 @@ so_spmdda <- function(delta, kappa=1, lambda=1, nu=1, tau=max(delta), epochs=10,
     for(i in 1:length(taus))
     {
       if(verbose>0) cat(paste0("Epoch ",i,": tau=",taus[i],"\n"))  
-      tmp<-spmdda(delta=delta, lambda=lambda, kappa=kappa, nu=nu, tau=taus[i], type=type, ties=ties, epsilon=epsilon, k=k, path=path, fragmentedOK=fragmentedOK, weightmat=weightmat, init=finconf, ndim=ndim, verbose=verbose-1, acc=acc, itmax=itmax, principal=principal)
+      tmp<-spmdda(delta=delta, lambda=lambda, kappa=kappa, nu=nu, tau=taus[i], type=type, ties=ties, epsilon=epsilon, k=k, path=path, fragmentedOK=fragmentedOK, weightmat=weightmat, init=finconf, ndim=ndim, verbose=verbose-1, acc=acc, itmax=itmax, principal=principal,spline.degree=spline.degree, spline.intKnots=spline.intKnots)
       finconf<-tmp$conf
       finmod<-tmp
     }
@@ -156,8 +166,9 @@ so_spmdda <- function(delta, kappa=1, lambda=1, nu=1, tau=max(delta), epochs=10,
 
 #' @rdname spmdda
 #' @export
-so_smdda <- function(delta, tau=max(delta), epochs=10, type=c("ratio"), ties="primary", epsilon, k, path="shortest", fragmentedOK=FALSE, weightmat=1-diag(nrow(delta)), init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal=FALSE) {
+so_smdda <- function(delta, tau=max(delta), epochs=10, type=c("ratio"), ties="primary", epsilon, k, path="shortest", fragmentedOK=FALSE, weightmat=1-diag(nrow(delta)), init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal=FALSE,spline.degree = 2, spline.intKnots = 2) {
     cc <- match.call()
+    type <- match.arg(type, c("ratio", "interval", "ordinal","mspline"),several.ok = FALSE)
     if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
     if(!isSymmetric(delta)) stop("delta is not symmetric.\n")
     if(length(tau)<2)
@@ -171,7 +182,7 @@ so_smdda <- function(delta, tau=max(delta), epochs=10, type=c("ratio"), ties="pr
     for(i in 1:length(taus))
     {
       if(verbose>0) cat(paste0("Epoch ",i,": tau=",taus[i],"\n"))  
-      tmp<-smdda(delta=delta, tau=taus[i], type=type, ties=ties, epsilon=epsilon, k=k, path=path, fragmentedOK=fragmentedOK, weightmat=weightmat, init=finconf, ndim=ndim, verbose=verbose-1,  acc=acc, itmax=itmax, principal=principal)
+      tmp<-smdda(delta=delta, tau=taus[i], type=type, ties=ties, epsilon=epsilon, k=k, path=path, fragmentedOK=fragmentedOK, weightmat=weightmat, init=finconf, ndim=ndim, verbose=verbose-1,  acc=acc, itmax=itmax, principal=principal,spline.degree=spline.degree, spline.intKnots=spline.intKnots)
       finconf<-tmp$conf
       finmod<-tmp
     }
@@ -179,3 +190,20 @@ so_smdda <- function(delta, tau=max(delta), epochs=10, type=c("ratio"), ties="pr
     finmod$model  <- "SO-SMDDA"
     return(finmod)
     }
+
+
+#' @rdname spmdda
+#' @export
+eCLDA <- smdda
+
+#' @rdname spmdda
+#' @export
+eCLPDA <- spmdda
+
+#' @rdname spmdda
+#' @export
+so_eCLPDA <- so_spmdda
+
+#' @rdname spmdda
+#' @export
+so_eCLDA <- so_smdda

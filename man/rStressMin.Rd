@@ -10,7 +10,7 @@
 rStressMin(
   delta,
   r = 0.5,
-  type = c("ratio", "interval", "ordinal"),
+  type = c("ratio", "interval", "ordinal", "mspline"),
   ties = "primary",
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
@@ -18,13 +18,15 @@ rStressMin(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
 )
 
 rstressMin(
   delta,
   r = 0.5,
-  type = c("ratio", "interval", "ordinal"),
+  type = c("ratio", "interval", "ordinal", "mspline"),
   ties = "primary",
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
@@ -32,13 +34,15 @@ rstressMin(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
 )
 
 rstressmds(
   delta,
   r = 0.5,
-  type = c("ratio", "interval", "ordinal"),
+  type = c("ratio", "interval", "ordinal", "mspline"),
   ties = "primary",
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
@@ -46,13 +50,15 @@ rstressmds(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
 )
 
 rstress(
   delta,
   r = 0.5,
-  type = c("ratio", "interval", "ordinal"),
+  type = c("ratio", "interval", "ordinal", "mspline"),
   ties = "primary",
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
@@ -60,7 +66,9 @@ rstress(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
 )
 }
 \arguments{
@@ -68,7 +76,7 @@ rstress(
 
 \item{r}{power of the transformation of the fitted distances (corresponds to kappa/2 in power stress); defaults to 0.5 for standard stress}
 
-\item{type}{what type of MDS to fit. Currently one of "ratio", "interval" or "ordinal". Default is "ratio".}
+\item{type}{what type of MDS to fit. Currently one of "ratio", "interval", "mspline" or "ordinal". Default is "ratio".}
 
 \item{ties}{the handling of ties for ordinal (nonmetric) MDS. Possible are "primary" (default), "secondary" or "tertiary".}
 
@@ -82,9 +90,13 @@ rstress(
 
 \item{itmax}{maximum number of iterations. Default is 10000.}
 
-\item{verbose}{should iteration output be printed; if > 1 then yes}
+\item{verbose}{should fitting information be printed; if > 0 then yes}
 
 \item{principal}{If 'TRUE', principal axis transformation is applied to the final configuration}
+
+\item{spline.degree}{Degree of the spline for ‘mspline’ MDS type}
+
+\item{spline.intKnots}{Number of interior knots of the spline for ‘mspline’ MDS type}
 }
 \value{
 a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
@@ -93,28 +105,44 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym
 \item tdelta: Observed explicitly transformed dissimilarities, normalized
 \item dhat: Explicitly transformed dissimilarities (dhats), optimally scaled and normalized 
 \item confdist: Transformed fitted configuration distances
+\item iord: Optimally scaled disparities function
 \item conf: Matrix of fitted configuration
 \item stress: Default stress  (stress 1; sqrt of explicitly normalized stress)
 \item spp: Stress per point 
 \item ndim: Number of dimensions
-\item model: Name of smacof model
+\item weightmat: Weighting matrix as supplied
+\item resmat: Residual matrix
+\item rss: Sum of residuals
+\item init: The starting configuration
+\item model: Name of MDS model
 \item niter: Number of iterations
 \item nobj: Number of objects
-\item type: Type of MDS model
-\item weightmat: weighting matrix as supplied
+\item type: Type of optimal scaling 
+\item call : the matched call
 \item stress.m: Default stress (stress-1^2)
-\item tweightmat: transformed weighting matrix (here NULL)
+\item alpha: Alpha matrix
+\item sigma: Stress
+\item parameters, pars, theta: Optimal transformation parameter
+\item tweightmat: Transformed weighting matrix (here NULL)
 }
 }
 \description{
-An implementation to minimize r-stress by majorization with ratio, interval and ordinal optimal scaling. Uses a repeat loop.
+An implementation to minimize r-stress by majorization with ratio, interval, monotonic spline and ordinal optimal scaling. Uses a repeat loop.
 }
 \examples{
 dis<-smacof::kinshipdelta
-res<-rStressMin(as.matrix(dis),type="ordinal",r=1,itmax=1000)
+
+## ordinal MDS
+res<-rStressMin(as.matrix(dis), type = "ordinal", r = 1, itmax = 1000)
 res
 summary(res)
 plot(res)
+
+## spline MDS 
+ress<-rStressMin(as.matrix(dis), type = "mspline", r = 1,
+      itmax = 1000)
+ress
+plot(ress,"Shepard")
 
 }
 \seealso{

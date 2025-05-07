@@ -31,7 +31,7 @@ alscal(
 
 \item{itmax}{maximum number of iterations. Default is 10000.}
 
-\item{verbose}{should iteration output be printed; if > 1 then yes}
+\item{verbose}{should iteration information been given; if > 0 then yes}
 
 \item{principal}{If ‘TRUE’, principal axis transformation is applied to the final configuration}
 }

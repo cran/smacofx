@@ -120,7 +120,7 @@ pstressmds(
 
 \item{itmax}{maximum number of iterations. Default is 10000.}
 
-\item{verbose}{should iteration output be printed; if > 1 then yes}
+\item{verbose}{should internal messages be printed; if > 0 then yes (iteration progress with >2)}
 
 \item{principal}{If 'TRUE', principal axis transformation is applied to the final configuration}
 }

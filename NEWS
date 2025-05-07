@@ -1,3 +1,27 @@
+Version 1.20-1
+
+- Added sphere data, ufold data and two rings data.
+
+Version 1.19-1
+
+- Added an acc argument to lmds and bcmds.
+
+Version 1.18-2
+
+- Added eCLCA, eCLPCA, eCLDA, eCLPDA aliases for sparsified MDS. Added mspline ot spmds variants.
+
+Version 1.18-1
+
+- Added a traceIt argument to the SPMDS variants which allows monitoring of the quasi-majorization. 
+
+Version 1.17-2
+
+- Added msplines for spmds. Added a convergence warning that gets output for verbose > 0 (not automatically as in stops it may create many warnings).  
+
+Version 1.17-1
+
+- Added opmds for nonlinear MDS with power functions (based on Jan's smacofPO but with explicitly normalized stress). Added msplines for r-stress. Made a versioning typo, so it is now 1.17 instead of 1.7. 
+
 Version 1.6-1
 
 - Fixed a bug in the optimal scaling for the disparities. 

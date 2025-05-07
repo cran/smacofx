@@ -15,7 +15,7 @@
 #' @param ndim dimension of the configuration; defaults to 2
 #' @param acc numeric accuracy of the iteration. Default is 1e-6.
 #' @param itmax maximum number of iterations. Default is 10000.
-#' @param verbose should iteration output be printed; if > 1 then yes
+#' @param verbose should internal messages be printed; if > 0 then yes (iteration progress with >2)
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
 #'
 #' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
@@ -61,7 +61,7 @@ powerStressMin <- function (delta, kappa=1, lambda=1, nu=1, type="ratio", weight
     if (trans=="ratio"){
     trans <- "none"
     }
-    if(verbose>0) cat("Minimizing",type,"power-stress with kappa=",kappa,"lambda=",lambda,"nu=",nu,"\n")
+    if(verbose>0) cat("Minimizing",type,"power stress with kappa=",kappa,"lambda=",lambda,"nu=",nu,"\n")
 
     n <- nrow (delta)
     r <- kappa/2
@@ -183,7 +183,7 @@ powerStressMin <- function (delta, kappa=1, lambda=1, nu=1, type="ratio", weight
      resmat<-spoint$resmat
      rss <- sum(spoint$resmat[lower.tri(spoint$resmat)])
      spp <- spoint$spp
-     #spp <- colMeans(resmat)
+     if (verbose > 0 && itel == itmax) warning("Iteration limit reached! You may want to increase the itmax argument!")
      if (principal) {
         xnew_svd <- svd(xnew)
         xnew <- xnew %*% xnew_svd$v

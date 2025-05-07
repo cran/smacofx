@@ -1,18 +1,20 @@
 #' R stress SMACOF
 #'
-#' An implementation to minimize r-stress by majorization with ratio, interval and ordinal optimal scaling. Uses a repeat loop.
+#' An implementation to minimize r-stress by majorization with ratio, interval, monotonic spline and ordinal optimal scaling. Uses a repeat loop.
 #' 
 #' @param delta dist object or a symmetric, numeric data.frame or matrix of distances
 #' @param r power of the transformation of the fitted distances (corresponds to kappa/2 in power stress); defaults to 0.5 for standard stress
-#' @param type what type of MDS to fit. Currently one of "ratio", "interval" or "ordinal". Default is "ratio".
+#' @param type what type of MDS to fit. Currently one of "ratio", "interval", "mspline" or "ordinal". Default is "ratio".
 #' @param ties the handling of ties for ordinal (nonmetric) MDS. Possible are "primary" (default), "secondary" or "tertiary".
 #' @param weightmat a matrix of finite weights. 
 #' @param init starting configuration
 #' @param ndim dimension of the configuration; defaults to 2
 #' @param acc numeric accuracy of the iteration. Default is 1e-6.
 #' @param itmax maximum number of iterations. Default is 10000.
-#' @param verbose should iteration output be printed; if > 1 then yes
+#' @param verbose should fitting information be printed; if > 0 then yes
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
+#' @param spline.degree Degree of the spline for ‘mspline’ MDS type
+#' @param spline.intKnots Number of interior knots of the spline for ‘mspline’ MDS type
 #'
 #' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
 #' \itemize{
@@ -20,17 +22,25 @@
 #' \item tdelta: Observed explicitly transformed dissimilarities, normalized
 #' \item dhat: Explicitly transformed dissimilarities (dhats), optimally scaled and normalized 
 #' \item confdist: Transformed fitted configuration distances
+#' \item iord: Optimally scaled disparities function
 #' \item conf: Matrix of fitted configuration
 #' \item stress: Default stress  (stress 1; sqrt of explicitly normalized stress)
 #' \item spp: Stress per point 
 #' \item ndim: Number of dimensions
-#' \item model: Name of smacof model
+#' \item weightmat: Weighting matrix as supplied
+#' \item resmat: Residual matrix
+#' \item rss: Sum of residuals
+#' \item init: The starting configuration
+#' \item model: Name of MDS model
 #' \item niter: Number of iterations
 #' \item nobj: Number of objects
-#' \item type: Type of MDS model
-#' \item weightmat: weighting matrix as supplied
+#' \item type: Type of optimal scaling 
+#' \item call : the matched call
 #' \item stress.m: Default stress (stress-1^2)
-#' \item tweightmat: transformed weighting matrix (here NULL)
+#' \item alpha: Alpha matrix
+#' \item sigma: Stress
+#' \item parameters, pars, theta: Optimal transformation parameter
+#' \item tweightmat: Transformed weighting matrix (here NULL)
 #'}
 #'
 #'
@@ -40,13 +50,21 @@
 #' 
 #' @examples
 #' dis<-smacof::kinshipdelta
-#' res<-rStressMin(as.matrix(dis),type="ordinal",r=1,itmax=1000)
+#'
+#' ## ordinal MDS
+#' res<-rStressMin(as.matrix(dis), type = "ordinal", r = 1, itmax = 1000)
 #' res
 #' summary(res)
 #' plot(res)
+#'
+#' ## spline MDS 
+#' ress<-rStressMin(as.matrix(dis), type = "mspline", r = 1,
+#'       itmax = 1000)
+#' ress
+#' plot(ress,"Shepard")
 #' 
 #' @export
-rStressMin <- function (delta, r=0.5, type=c("ratio","interval","ordinal"), ties="primary", weightmat=1-diag(nrow(delta)), init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal=FALSE) {
+rStressMin <- function(delta, r=0.5, type=c("ratio","interval","ordinal","mspline"), ties="primary", weightmat=1-diag(nrow(delta)), init=NULL, ndim = 2, acc= 1e-6, itmax = 10000, verbose = FALSE, principal = FALSE, spline.degree = 2, spline.intKnots = 2) {
     if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
     if(!isSymmetric(delta)) stop("delta is not symmetric.\n")
     #if(missing(weightmat)) weightmat <-
@@ -55,25 +73,29 @@ rStressMin <- function (delta, r=0.5, type=c("ratio","interval","ordinal"), ties
     #r <- kappa/2
     ## -- Setup for MDS type
     if(missing(type)) type <- "ratio"
-    type <- match.arg(type, c("ratio", "interval", "ordinal"),several.ok = FALSE) 
-    #    "mspline"), several.ok = FALSE)
+    type <- match.arg(type, c("ratio", "interval", "ordinal","mspline"), several.ok = FALSE)
     trans <- type
     typo <- type
-    if (trans=="ratio"){
-    trans <- "none"
+    if (trans=="ratio") {
+        trans <- "none"
     }
-    else if (trans=="ordinal" & ties=="primary"){
-    trans <- "ordinalp"
-    typo <- "ordinal (primary)"
-   } else if(trans=="ordinal" & ties=="secondary"){
-    trans <- "ordinals"
-    typo <- "ordinal (secondary)"
-  } else if(trans=="ordinal" & ties=="tertiary"){
-    trans <- "ordinalt"
-    typo <- "ordinal (tertiary)"
-  #} else if(trans=="spline"){
-  #  trans <- "mspline"
-  }
+    else if (trans=="ordinal" && ties=="primary") {
+        trans <- "ordinalp"
+        typo <- "ordinal (primary)"
+        }
+    else if(trans=="ordinal" && ties=="secondary") {
+        trans <- "ordinals"
+        typo <- "ordinal (secondary)"
+        }
+    else if(trans=="ordinal" && ties=="tertiary") {
+        trans <- "ordinalt"
+        typo <- "ordinal (tertiary)"
+        }
+    else if(trans=="spline"){
+        trans <- "mspline"
+        typo <- "mspline"
+        type <- "mspline"
+        }
     if(verbose>0) cat(paste("Minimizing",type,"rStress with r=",r,"\n"))
     n <- nrow (delta)
     normi <- 0.5
@@ -87,27 +109,25 @@ rStressMin <- function (delta, r=0.5, type=c("ratio","interval","ordinal"), ties
     #delta <- delta^lambda
     #weightmat <- weightmat^nu
     weightmat[!is.finite(weightmat)] <- 0
-    delta <- delta / enorm (delta, weightmat)
-    disobj <- smacof::transPrep(as.dist(delta), trans = trans, spline.intKnots = 2, spline.degree = 2)#spline.intKnots = spline.intKnots, spline.degree = spline.degree) #FIXME: only works with dist() style object 
+    disobj <- smacof::transPrep(as.dist(delta), trans = trans, spline.intKnots = spline.intKnots, spline.degree = spline.degree)
+    delta <- delta / enorm (delta, weightmat) #CHECK: Was before before disobj before
     ## Add an intercept to the spline base transformation
-                                        #if (trans == "mspline") disobj$base <- cbind(rep(1, nrow(disobj$base)), disobj$base)
-    #delta <- delta / enorm (delta, weightmat)
+    if (trans == "mspline") disobj$base <- cbind(rep(1, nrow(disobj$base)), disobj$base)
     deltaold <- delta
     itel <- 1
     ##Starting Configs
     xold  <- init
     if(is.null(init)) xold <- smacof::torgerson (delta, p = p)
     xstart <- xold
-    xold <- xold / enorm (xold) 
-    nn <- diag (n)
-    dold <- sqdist (xold)
+    xold <- xold / enorm(xold) 
+    nn <- diag(n)
+    dold <- sqdist(xold)
    ##first optimal scaling
     ## eold <- as.dist(sqrt(dold)) #was bug prior to 1.6-1
     eold <- as.dist(mkPower(dold,r))
     dhat <- smacof::transform(eold, disobj, w = as.dist(weightmat), normq = normi)
-    dhatt <- dhat$res #I need the structure here to reconstruct the delta; alternatively turn all into vectors? - checked how they do it in smacof
+    dhatt <- dhat$res 
     dhatd <- structure(dhatt, Size = n, call = quote(as.dist.default(m=b)), class = "dist", Diag = FALSE, Upper = FALSE)
-    #FIXME: labels
     delta <- as.matrix(dhatd)
     rold <- sum (weightmat * delta * mkPower (dold, r))
     nold <- sum (weightmat * mkPower (dold, 2 * r))
@@ -138,28 +158,26 @@ rStressMin <- function (delta, r=0.5, type=c("ratio","interval","ordinal"), ties
       dhatt <- dhat2$res 
       dhatd <- structure(dhatt, Size = n, call = quote(as.dist.default(m=b)), class = "dist", Diag = FALSE, Upper = FALSE)
       delta <- as.matrix(dhatd)
-      #delta <- as.matrix(dhatt) #In cops this is <<- because we need to change it outside of copsf() but here we don't need that 
       rnew <- sum (weightmat * delta * mkPower (dnew, r))
       nnew <- sum (weightmat * mkPower (dnew, 2 * r))
       anew <- rnew / nnew
       snew <- 1 - 2 * anew * rnew + (anew ^ 2) * nnew
-      if(is.na(snew)) #if there are issues with the values
-          {
-              snew <- sold
-              dnew <- dold
-              anew <- aold
-              xnew <- xold
-          }   
+      if(is.na(snew)) { #if there are issues in the values
+          snew <- sold
+          dnew <- dold
+          anew <- aold
+          xnew <- xold
+      }   
       if (verbose>2) {
-        cat (
-          formatC (itel, width = 4, format = "d"),
-          formatC (
+        cat(
+          formatC(itel, width = 4, format = "d"),
+          formatC(
             sold,
             digits = 10,
             width = 13,
             format = "f"
           ),
-          formatC (
+          formatC(
             snew,
             digits = 10,
             width = 13,
@@ -200,7 +218,7 @@ rStressMin <- function (delta, r=0.5, type=c("ratio","interval","ordinal"), ties
     resmat<-spoint$resmat
     rss <- sum(spoint$resmat[lower.tri(spoint$resmat)])
     spp <- spoint$spp
-    #spp <- colMeans(resmat)
+    if (verbose > 0 && itel == itmax) warning("Iteration limit reached! You may want to increase the itmax argument!")
     if (principal) {
         xnew_svd <- svd(xnew)
         xnew <- xnew %*% xnew_svd$v
@@ -208,7 +226,7 @@ rStressMin <- function (delta, r=0.5, type=c("ratio","interval","ordinal"), ties
     #stressen <- sum(weightmat*(doute-delta)^2)
     if(verbose>1) cat("*** Stress:",snew, "; Stress 1 (default reported):",sqrt(snew),"\n")
     #delta is input delta, tdelta is input delta with explicit transformation and normalized, dhat is dhats 
-    out <- list(delta=deltaorig, dhat=delta, confdist=dout, iord=dhat2$iord.prim, conf = xnew, stress=sqrt(snew), spp=spp,  ndim=p, weightmat=weightmat, resmat=resmat, rss=rss, init=xstart, model="r-stress SMACOF", niter = itel, nobj = dim(xnew)[1], type = type, call=match.call(), stress.m=snew, alpha = anew, sigma = snew, tdelta=deltaold, parameters=c(r=r), pars=c(r=r), theta=c(r=r),tweightmat=NULL)
+    out <- list(delta=deltaorig, tdelta=deltaold, dhat=delta, confdist=dout, iord=dhat2$iord.prim, conf = xnew, stress=sqrt(snew), spp=spp,  ndim=p, weightmat=weightmat, resmat=resmat, rss=rss, init=xstart, model="r-stress SMACOF", niter = itel, nobj = dim(xnew)[1], type = type, call=match.call(), stress.m = snew, alpha = anew, sigma = snew, parameters=c(r=r), pars=c(r=r), theta=c(r=r), tweightmat=NULL)
     class(out) <- c("smacofP","smacofB","smacof")
     out
   }

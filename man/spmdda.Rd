@@ -5,7 +5,11 @@
 \alias{smdda}
 \alias{so_spmdda}
 \alias{so_smdda}
-\title{Sparse (POST-)Multidimensional Distance Analysis (SPMDDA or SMDDA) either as self-organizing or not}
+\alias{eCLDA}
+\alias{eCLPDA}
+\alias{so_eCLPDA}
+\alias{so_eCLDA}
+\title{Extended Curvilinear (Power) Distance Analysis (eCLPDA or eCLDA) aka Sparse (POST-)Multidimensional Distance Analysis (SPMDDA or SMDDA) either as self-organizing or not}
 \usage{
 spmdda(
   delta,
@@ -25,13 +29,16 @@ spmdda(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2,
+  traceIt = FALSE
 )
 
 smdda(
   delta,
   tau = stats::quantile(delta, 0.9),
-  type = c("ratio"),
+  type = "ratio",
   ties = "primary",
   epsilon,
   k,
@@ -43,7 +50,10 @@ smdda(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  traceIt = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
 )
 
 so_spmdda(
@@ -65,7 +75,9 @@ so_spmdda(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
 )
 
 so_smdda(
@@ -84,7 +96,99 @@ so_smdda(
   acc = 1e-06,
   itmax = 10000,
   verbose = FALSE,
-  principal = FALSE
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+eCLDA(
+  delta,
+  tau = stats::quantile(delta, 0.9),
+  type = "ratio",
+  ties = "primary",
+  epsilon,
+  k,
+  path = "shortest",
+  fragmentedOK = FALSE,
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  traceIt = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+eCLPDA(
+  delta,
+  lambda = 1,
+  kappa = 1,
+  nu = 1,
+  tau,
+  type = "ratio",
+  ties = "primary",
+  epsilon,
+  k,
+  path = "shortest",
+  fragmentedOK = FALSE,
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2,
+  traceIt = FALSE
+)
+
+so_eCLPDA(
+  delta,
+  kappa = 1,
+  lambda = 1,
+  nu = 1,
+  tau = max(delta),
+  epochs = 10,
+  type = c("ratio"),
+  ties = "primary",
+  epsilon,
+  k,
+  path = "shortest",
+  fragmentedOK = FALSE,
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+so_eCLDA(
+  delta,
+  tau = max(delta),
+  epochs = 10,
+  type = c("ratio"),
+  ties = "primary",
+  epsilon,
+  k,
+  path = "shortest",
+  fragmentedOK = FALSE,
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
 )
 }
 \arguments{
@@ -98,7 +202,7 @@ so_smdda(
 
 \item{tau}{the boundary/neighbourhood parameter(s) (called lambda in the original paper). For 'spmdda' and 'smdda' it is supposed to be a numeric scalar (if a sequence is supplied the maximum is taken as tau) and all the transformed fitted distances exceeding tau are set to 0 via the weightmat (assignment can change between iterations).  It defaults to the 90\% quantile of the enormed (power transformed) geodesic distances of delta. For 'so_pclca' tau is supposed to be either a user supplied decreasing sequence of taus or if a scalar the maximum tau from which a decreasing sequence of taus is generated automatically as 'seq(from=tau,to=tau/epochs,length.out=epochs)' and then used in sequence.}
 
-\item{type}{what type of MDS to fit. Currently one of "ratio", "interval" or "ordinal". Default is "ratio".}
+\item{type}{what type of MDS to fit. Currently one of "ratio", "interval","ordinal" or "mspline". Default is "ratio".}
 
 \item{ties}{the handling of ties for ordinal (nonmetric) MDS. Possible are "primary" (default), "secondary" or "tertiary".}
 
@@ -120,9 +224,15 @@ so_smdda(
 
 \item{itmax}{maximum number of iterations. Default is 10000.}
 
-\item{verbose}{should iteration output be printed; if > 1 then yes}
+\item{verbose}{should fitting infomation be printed; if > 0 then yes}
 
 \item{principal}{If 'TRUE', principal axis transformation is applied to the final configuration}
+
+\item{spline.degree}{Degree of the spline for ‘mspline’ MDS type}
+
+\item{spline.intKnots}{Number of interior knots of the spline for ‘mspline’ MDS type}
+
+\item{traceIt}{save the iteration progress in a vector (stress values)}
 
 \item{epochs}{for 'so_pclca' and tau being scalar, it gives the number of passes through the data. The sequence of taus created is 'seq(tau,tau/epochs,length.out=epochs)'. If tau is of length >1, this argument is ignored.}
 }
@@ -143,14 +253,15 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym
 \item type: Type of MDS model
 \item weightmat: weighting matrix as supplied
 \item stress.m: Default stress (stress-1^2)
-\item tweightmat: transformed weighting matrix; it is weightmat but containing all the 0s for the distances set to 0. 
+\item tweightmat: transformed weighting matrix; it is weightmat but containing all the 0s for the distances set to 0.
+\item trace: if 'traceIt=TRUE' a vector with the iteration progress
 }
 }
 \description{
 An implementation of a sparsified version of (POST-)MDS by pseudo-majorization with ratio, interval and ordinal optimal scaling for geodesic distances and optional power transformations. This is inspired by curvilinear distance analysis but works differently: It finds an initial weightmatrix where w_ij(X^0)=0 if d_ij(X^0)>tau and fits a POST-MDS with these weights. Then in each successive iteration step, the weightmat is recalculated so that w_ij(X^(n+1))=0 if d_ij(X^(n+1))>tau. Right now the zero weights are not found by the correct optimization, but we're working on that.
 }
 \details{
-In 'spmdda' the logic is that we first transform to geodesic distance, then apply the explicit power transformation and then the implicit optimal scaling. There is a wrapper 'smdda' where the exponents are 1, which is standard SMDDA but extend to allow optimal scaling. The neighborhood parameter tau is kept fixed in 'spmdda' and 'smdda'. The functions 'so_spmdda' and 'so_smdda' implement a self-organising principle where the is repeatedly fitted for a decreasing sequence of taus.
+In 'spmdda' the logic is that we first transform to geodesic distance, then apply the explicit power transformation and then the implicit optimal scaling. There is a wrapper 'smdda', 'eCLDA' where the exponents are 1, which is standard SMDDA or eCLPDA but extend to allow optimal scaling. The neighborhood parameter tau is kept fixed in 'spmdda', 'eCLPDA' and 'smdda', 'eCLDA'. The functions 'so_spmdda', 'so_eCLPDA' and 'so_smdda', 'so_eCLDA' implement a self-organising principle where the is repeatedly fitted for a decreasing sequence of taus.
 
 
 The solution is found by "quasi-majorization", which mean that the majorization is only working properly after a burn-in of a few iterations when the assignment which distances are ignored no longer changes. Due to that it can be that in the beginning the stress may not decrease monotonically and that there's a chance it might never.
@@ -169,6 +280,10 @@ res
 coef(res)
 
 res2<-smdda(dis,type="interval",tau=0.4,epsilon=1,itmax=500) #use higher itmax
+#aliases:
+resa<-eCLPDA(dis,kappa=2,lambda=2,tau=0.4,k=5,itmax=500) #use higher itmax
+res2a<-eCLDA(dis,type="interval",tau=0.4,epsilon=1,itmax=500) #use higher itmax
+
 res2
 summary(res)
 oldpar<-par(mfrow=c(1,2))

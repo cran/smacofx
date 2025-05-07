@@ -32,7 +32,7 @@ multiscale(
 
 \item{itmax}{maximum number of iterations. Default is 10000.}
 
-\item{verbose}{should iteration output be printed; if > 1 then yes}
+\item{verbose}{should iteration output be printed; if > 0 then yes}
 
 \item{kappa}{As this is not exactly multiscale but an r-stress approximation, we have multiscale only for kappa->0. This argument can therefore be used to make the approximation more accurate by making it smaller. Default is 0.1.}
 

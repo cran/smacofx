@@ -10,6 +10,7 @@
 #' @param ndim the dimension of the configuration
 #' @param weightmat a matrix of finite weights. Not implemented.
 #' @param itmax number of optimizing iterations, defaults to 5000.
+#' @param acc accuracy (lowest stepsize). Defaults to 1e-5.
 #' @param verbose prints info if > 0 and progress if > 1.
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
 #' @param normconf normalize the configuration to sum(delta^2)=1 (as in the power stresses). Note that then the distances in confdist do not match the manually calculated ones.
@@ -57,7 +58,7 @@
 #' 
 #' @export
 lmds <- function(delta,k=2,tau=1,type="ratio",ndim=2,weightmat=1-diag(nrow(delta)),
-                   itmax=5000,init=NULL,verbose=0,principal=FALSE,normconf=FALSE)
+                   itmax=5000,acc=1e-5,init=NULL,verbose=0,principal=FALSE,normconf=FALSE)
 {
     if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
     if(!isSymmetric(delta)) stop("Delta is not symmetric.\n")
@@ -107,7 +108,7 @@ lmds <- function(delta,k=2,tau=1,type="ratio",ndim=2,weightmat=1-diag(nrow(delta
   stepsize <-0.1
   i <- 0
 
-while ( stepsize > 1E-5 && i < niter)
+while ( stepsize > acc && i < niter)
   {
     if (s1 >= s0 && i>1)
      {

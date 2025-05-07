@@ -68,7 +68,7 @@ a 'smacofP' object. It is a list with the components
 A wrapper to run curvilinear component analysis via \code{\link[ProjectionBasedClustering]{CCA}} and returning a 'smacofP' object. Note this functionality is rather rudimentary.
 }
 \details{
-This implements CCA as in Demartines & Herault (1997). A different take on the ideas of curvilinear compomnent analysis is available in the experimental functions \code{\link{spmds}} and \code{\link{spmds}}.
+This implements CCA as in Desmartines & Herault (1997). A different take on the ideas of curvilinear compomnent analysis is available in the experimental functions \code{\link{spmds}} and \code{\link{spmds}}.
 }
 \examples{
 dis<-smacof::morse
