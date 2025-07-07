@@ -213,6 +213,7 @@ plot.smacofP <- function (x, plot.type = "confplot", plot.dim = c(1, 2), bubscal
         disttrans.ind <- names(x$pars)%in%c("kappa","r") #TODO: make sure only the distance parameter is here, so kappa or r or whatever it is with the stops functions, enhance this with any new parameter names is it exists. ALso, if it is kappa or mu we take it at face vlaue and if it is r we need to double it as kappa=2*r.
         #TODO: Be careful not to name different parameter the same way as some of the distance transformation parameters
         disttrans <- x$pars[disttrans.ind]
+        if(length(disttrans)==0) disttrans <- c(none=1)
         #points((delts[x$iord])[notmiss.iord], sqrt(2*x$nobj)*(as.vector(x$dhat[x$iord]))[notmiss.iord], type = "b", pch = pch, cex = cex,col=col[3])
         #TRIED: tried to change the sqrt(2*nobj) which works for r=0.5/kappa=1. I think part of the issue is that we also do enorm - so can we figure out a scaling factor from the scale of the confdist?
        #  SOLVED: used a linear model to get a scaling factor and an intercept. Looks good! The dhat are on a scale that is just transformed with enorm() and and we get the scaling factors with a linear function
@@ -237,7 +238,8 @@ plot.smacofP <- function (x, plot.type = "confplot", plot.dim = c(1, 2), bubscal
             #TODO: change here if we have objects with otehr parameters. First one must always be the configuration distance transformation (usually kappa, r, or mu) 
             expo <- switch(names(disttrans),
                        r=2*disttrans,
-                       kappa=disttrans
+                       kappa=disttrans,
+                       1
                        )                   
             ## In case of ordinal I also use lm with intercept to get the scaling factor, but we also need to take the power transformation into account, so I create expo and do the lm thus.  
             ## If found that re-scaling of the dhats gets better if we do this power regression
@@ -252,7 +254,8 @@ plot.smacofP <- function (x, plot.type = "confplot", plot.dim = c(1, 2), bubscal
             #TODO: change here if we have objects with other parameters. First one must always be the configuration distance transformation (usually kappa, r, or mu) 
             expo <- switch(names(disttrans),
                        r=2*disttrans,
-                       kappa=disttrans
+                       kappa=disttrans,
+                       1
                        )                    
             scallm <- stats::coef(stats::lm(confd1~I(dhats1^expo),weights=wm))
         }

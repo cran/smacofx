@@ -78,7 +78,7 @@ apStressMin <- function (delta, kappa=1, lambda=1, nu=1, type="ratio", weightmat
     out$delta <- stats::as.dist(deltaorig)
     out$tweightmat <-stats::as.dist(tweightmat)
     out$weightmat <- stats::as.dist(weightmat)
-    out$model <- "Approx. Power-Stress SMACOF"
+    out$model <- "Approx. power-stress MDS"
     out$call <- match.call()
     out$stress.m <- out$stress^2
     out$tdelta <- stats::as.dist(tdelta)

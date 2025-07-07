@@ -110,7 +110,7 @@ powerStressFast <- function (delta, kappa=1, lambda=1, nu=1, weightmat=1-diag(nr
       weightmat <- stats::as.dist(weightmatm)
       stressen <- sum(weightmat*(doute-delta)^2) #raw stress on the normalized proximities and normalized distances 
       if(verbose>1) cat("*** stress (both normalized - for COPS/STOPS):",stress,"; stress 1 (both normalized - default reported):",sqrt(stress),"; stress manual (for debug only):",stressen,"; from optimization: ",optimized$fval,"\n")   
-    out <- list(delta=deltaold, obsdiss=delta, confdist=dout, conf = xnew, pars=c(kappa,lambda,nu), niter = itel, stress=stress, spp=spp, ndim=p, model="Power-Stress NEWUOA", call=match.call(), nobj = dim(xnew)[1], type = type, gamma = NA, stress.m=sqrt(stress), stress.en=stressen, deltaorig=as.dist(deltaorig),resmat=resmat,weightmat=weightmat)
+    out <- list(delta=deltaold, obsdiss=delta, confdist=dout, conf = xnew, pars=c(kappa,lambda,nu), niter = itel, stress=stress, spp=spp, ndim=p, model="power-stress MDS (NEWUOA)", call=match.call(), nobj = dim(xnew)[1], type = type, gamma = NA, stress.m=sqrt(stress), stress.en=stressen, deltaorig=as.dist(deltaorig),resmat=resmat,weightmat=weightmat)
     class(out) <- c("smacofP","smacofB","smacof")
     out
 }

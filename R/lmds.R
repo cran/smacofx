@@ -237,7 +237,7 @@ while ( stepsize > acc && i < niter)
   result$resmat <- resmat
   result$rss <- rss
   result$init <- xstart
-  result$model<- "Local MDS"
+  result$model<- "local MDS"
   result$niter <- i
   result$nobj <- n
   result$type <- "ratio"

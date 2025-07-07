@@ -9,6 +9,10 @@
 \alias{eCLPCA}
 \alias{so_eCLPCA}
 \alias{so_eCLCA}
+\alias{eclca}
+\alias{eclpca}
+\alias{so_eclca}
+\alias{so_eclpca}
 \title{Extended Curvilinear (Power) Component Analysis aka Sparsified (POST-) Multidimensional Scaling (SPMDS or SMDS) either as self-organizing or not}
 \usage{
 spmds(
@@ -22,7 +26,7 @@ spmds(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -33,13 +37,13 @@ spmds(
 
 smds(
   delta,
-  tau = stats::quantile(delta, 0.9),
+  tau,
   type = "ratio",
   ties = "primary",
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -60,7 +64,7 @@ so_spmds(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -77,7 +81,7 @@ so_smds(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -87,13 +91,13 @@ so_smds(
 
 eCLCA(
   delta,
-  tau = stats::quantile(delta, 0.9),
+  tau,
   type = "ratio",
   ties = "primary",
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -113,7 +117,7 @@ eCLPCA(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -134,7 +138,7 @@ so_eCLPCA(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -151,7 +155,81 @@ so_eCLCA(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+eclca(
+  delta,
+  tau,
+  type = "ratio",
+  ties = "primary",
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-08,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  traceIt = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+eclpca(
+  delta,
+  lambda = 1,
+  kappa = 1,
+  nu = 1,
+  tau,
+  type = "ratio",
+  ties = "primary",
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-08,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2,
+  traceIt = FALSE
+)
+
+so_eclca(
+  delta,
+  tau = max(delta),
+  epochs = 10,
+  type = "ratio",
+  ties = "primary",
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-08,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+so_eclpca(
+  delta,
+  kappa = 1,
+  lambda = 1,
+  nu = 1,
+  tau = max(delta),
+  epochs = 10,
+  type = "ratio",
+  ties = "primary",
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -168,7 +246,7 @@ so_eCLCA(
 
 \item{nu}{exponent of the power of the weighting matrix; defaults to 1 which is also the setup for 'smds'.}
 
-\item{tau}{the boundary/neighbourhood parameter(s) (called lambda in the original paper). For 'spmds' and 'smds' it is supposed to be a numeric scalar (if a sequence is supplied the maximum is taken as tau) and all the transformed fitted distances exceeding tau are set to 0 via the weightmat (assignment can change between iterations). It defaults to the 90\% quantile of delta. For 'so_spmds' tau is supposed to be either a user supplied decreasing sequence of taus or if a scalar the maximum tau from which a decreasing sequence of taus is generated automatically as 'seq(from=tau,to=tau/epochs,length.out=epochs)' and then used in sequence.}
+\item{tau}{the boundary/neighbourhood parameter(s) (called lambda in the original paper). For 'spmds' and 'smds' it is supposed to be a numeric scalar (if a sequence is supplied the maximum is taken as tau) and all the transformed fitted distances exceeding tau are set to 0 via the weightmat (assignment can change between iterations). It defaults to the 1\% quantile of delta. For 'so_spmds' tau is supposed to be either a user supplied decreasing sequence of taus or if a scalar the maximum tau from which a decreasing sequence of taus is generated automatically as 'seq(from=tau,to=tau/epochs,length.out=epochs)' and then used in sequence.}
 
 \item{type}{what type of MDS to fit. Currently one of "ratio", "interval", "mspline" or "ordinal". Default is "ratio".}
 
@@ -180,7 +258,7 @@ so_eCLCA(
 
 \item{ndim}{dimension of the configuration; defaults to 2}
 
-\item{acc}{numeric accuracy of the iteration. Default is 1e-6.}
+\item{acc}{numeric accuracy of the iteration. Default is 1e-8.}
 
 \item{itmax}{maximum number of iterations. Default is 10000.}
 

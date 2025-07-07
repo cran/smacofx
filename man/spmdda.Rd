@@ -9,6 +9,10 @@
 \alias{eCLPDA}
 \alias{so_eCLPDA}
 \alias{so_eCLDA}
+\alias{eclpda}
+\alias{eclda}
+\alias{so_eclpda}
+\alias{so_eclda}
 \title{Extended Curvilinear (Power) Distance Analysis (eCLPDA or eCLDA) aka Sparse (POST-)Multidimensional Distance Analysis (SPMDDA or SMDDA) either as self-organizing or not}
 \usage{
 spmdda(
@@ -26,7 +30,7 @@ spmdda(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -47,7 +51,7 @@ smdda(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -72,7 +76,7 @@ so_spmdda(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -93,7 +97,7 @@ so_smdda(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -113,7 +117,7 @@ eCLDA(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -137,7 +141,7 @@ eCLPDA(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -162,7 +166,7 @@ so_eCLPDA(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -183,7 +187,97 @@ so_eCLDA(
   weightmat = 1 - diag(nrow(delta)),
   init = NULL,
   ndim = 2,
-  acc = 1e-06,
+  acc = 1e-08,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+eclpda(
+  delta,
+  lambda = 1,
+  kappa = 1,
+  nu = 1,
+  tau,
+  type = "ratio",
+  ties = "primary",
+  epsilon,
+  k,
+  path = "shortest",
+  fragmentedOK = FALSE,
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-08,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2,
+  traceIt = FALSE
+)
+
+eclda(
+  delta,
+  tau = stats::quantile(delta, 0.9),
+  type = "ratio",
+  ties = "primary",
+  epsilon,
+  k,
+  path = "shortest",
+  fragmentedOK = FALSE,
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-08,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  traceIt = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+so_eclpda(
+  delta,
+  kappa = 1,
+  lambda = 1,
+  nu = 1,
+  tau = max(delta),
+  epochs = 10,
+  type = c("ratio"),
+  ties = "primary",
+  epsilon,
+  k,
+  path = "shortest",
+  fragmentedOK = FALSE,
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-08,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE,
+  spline.degree = 2,
+  spline.intKnots = 2
+)
+
+so_eclda(
+  delta,
+  tau = max(delta),
+  epochs = 10,
+  type = c("ratio"),
+  ties = "primary",
+  epsilon,
+  k,
+  path = "shortest",
+  fragmentedOK = FALSE,
+  weightmat = 1 - diag(nrow(delta)),
+  init = NULL,
+  ndim = 2,
+  acc = 1e-08,
   itmax = 10000,
   verbose = FALSE,
   principal = FALSE,
@@ -220,7 +314,7 @@ so_eCLDA(
 
 \item{ndim}{dimension of the configuration; defaults to 2}
 
-\item{acc}{numeric accuracy of the iteration. Default is 1e-6.}
+\item{acc}{numeric accuracy of the iteration. Default is 1e-8.}
 
 \item{itmax}{maximum number of iterations. Default is 10000.}
 

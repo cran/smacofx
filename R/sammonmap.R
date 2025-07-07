@@ -211,7 +211,7 @@ sammonmap <- function (delta, type=c("ratio","interval"), weightmat, init=NULL, 
     }
     #stressen <- sum(weightmat*(doute-delta)^2)
     if(verbose>1) cat("*** Stress:",snew, "; Stress 1 (default reported):",sqrt(snew),"\n")  
-    out <- list(delta=deltaorig, dhat=delta, confdist=dout, iord=dhat2$iord.prim, conf = xnew, stress=sqrt(snew), spp=spp,  ndim=p, weightmat=weightmatorig, resmat=resmat, rss=rss, init=xstart, model="Sammon SMACOF", niter = itel, nobj = dim(xnew)[1], type = type, call=match.call(), stress.m=snew, alpha = anew, sigma = snew, tdelta=deltaold, parameters=c(kappa=1,lambda=1), pars=c(kappa=1,lambda=1), theta=c(kappa=1,lambda=1),tweightmat=weightmat)
+    out <- list(delta=deltaorig, dhat=delta, confdist=dout, iord=dhat2$iord.prim, conf = xnew, stress=sqrt(snew), spp=spp,  ndim=p, weightmat=weightmatorig, resmat=resmat, rss=rss, init=xstart, model="Sammon Mapping", niter = itel, nobj = dim(xnew)[1], type = type, call=match.call(), stress.m=snew, alpha = anew, sigma = snew, tdelta=deltaold, parameters=c(kappa=1,lambda=1), pars=c(kappa=1,lambda=1), theta=c(kappa=1,lambda=1),tweightmat=weightmat)
     class(out) <- c("smacofP","smacofB","smacof")
     out
   }

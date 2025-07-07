@@ -1,6 +1,6 @@
 Package: smacofx
 Title: Flexible Multidimensional Scaling and 'smacof' Extensions
-Version: 1.20-1
+Version: 1.21-1
 Authors@R: c(
     person(given="Thomas", family="Rusch", email="thomas.rusch@wu.ac.at", role = c("aut","cre"), comment = c(ORCID = "0000-0002-7773-2096")),
     person(given="Jan",family="de Leeuw", role = c("aut")),
@@ -18,11 +18,11 @@ BugReports: https://r-forge.r-project.org/tracker/?atid=5375&group_id=2037&func=
 RoxygenNote: 7.3.2
 Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2025-05-06 17:48:12 UTC; trusch
+Packaged: 2025-07-07 09:13:09 UTC; trusch
 Author: Thomas Rusch [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-7773-2096>),
   Jan de Leeuw [aut],
   Lisha Chen [aut],
   Patrick Mair [aut] (ORCID: <https://orcid.org/0000-0003-0100-6511>)
 Repository: CRAN
-Date/Publication: 2025-05-07 12:50:02 UTC
+Date/Publication: 2025-07-07 10:30:02 UTC

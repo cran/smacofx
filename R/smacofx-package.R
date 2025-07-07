@@ -18,12 +18,10 @@
 #' \item bcmds ... Box-Cox MDS with ratio optimal scaling
 #' \item lmds... Local MDS with ratio optimal scaling
 #' \item sammonmap... Sammon mapping with ratio, interval optimal scaling
-#' \item smds ... power curvilinear component analysis with ratio, interval, ordinal optimal scaling
-#' \item pclca ... power curvilinear component analysis with ratio, interval, ordinal optimal scaling
-#' \item smdda ... sparsified multidimensional distance analsysis with ratio interval scaling (this is smds with Isomap distances) 
-#' \item spmdda ... sparsified power multidimensional distance analsysis with ratio interval scaling (this is spmds with Isomap distances)  
-#' \item smds ... sparsified multidimensional scaling with ratio interval scaling (inspired by CLCA, so fitted distances larger than tau are weighted with 0)
-#' \item spmds ... sparsified multidimensional scaling with ratio interval scaling (inspired by CLCA, so fitted distances larger than tau are weighted with 0)
+#' \item eCLPA aka smdda ... sparsified multidimensional distance analsysis with ratio, interval, spline scaling (this is smds with Isomap distances) 
+#' \item eCLPDA aka spmdda ... sparsified power multidimensional distance analsysis with ratio, interval, spline scaling (this is spmds with Isomap distances)  
+#' \item eCLCA aka smds ... sparsified multidimensional scaling with ratio, interval, spline scaling (extended CLCA, so fitted distances larger than tau are weighted with 0)
+#' \item eCLPCA spmds ... sparsified multidimensional scaling with ratio, interval, spline scaling (extended CLPCA, so fitted distances larger than tau are weighted with 0)
 #' \item opmds ... nonlinear MDS with optimal power for the dissimilarities.
 #' }
 #'

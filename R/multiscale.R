@@ -205,7 +205,7 @@ multiscale <- function (delta, type=c("ratio","interval"), weightmat, init=NULL,
     }
      #stressen <- sum(weightmat*(doute-delta)^2)
     if(verbose>1) cat("*** Stress:",snew, "; Stress 1 (default reported):",sqrt(snew),"\n")  
-    out <- list(delta=deltaorig, dhat=delta, confdist=dout, iord=dhat2$iord.prim, conf = xnew, stress=sqrt(snew), spp=spp,  ndim=p, weightmat=weightmat, resmat=resmat, rss=rss, init=xstart, model="Multiscale SMACOF", niter = itel, nobj = dim(xnew)[1], type = type, call=match.call(), stress.m=snew, alpha = anew, sigma = snew, tdelta=deltaold, parameters=c(kappa=kappa,TDelta="log"), pars=c(kappa=kappa,TDelta="log"), theta=c(kappa=kappa,TDelta="log"),tweightmat=NULL)
+    out <- list(delta=deltaorig, dhat=delta, confdist=dout, iord=dhat2$iord.prim, conf = xnew, stress=sqrt(snew), spp=spp,  ndim=p, weightmat=weightmat, resmat=resmat, rss=rss, init=xstart, model="MULTISCALE", niter = itel, nobj = dim(xnew)[1], type = type, call=match.call(), stress.m=snew, alpha = anew, sigma = snew, tdelta=deltaold, parameters=c(kappa=kappa,TDelta="log"), pars=c(kappa=kappa,TDelta="log"), theta=c(kappa=kappa,TDelta="log"),tweightmat=NULL)
     class(out) <- c("smacofP","smacofB","smacof")
     out
   }

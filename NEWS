@@ -1,3 +1,11 @@
+Version 1.21-1
+
+- Fixed bug in Shepard plot for smds, smda, clca, clda with type="mspline".
+
+Version 1.21-0
+
+- Added new aliases for the eCLCA versions. Changed default acc for manifold learning algorithms to 1e-8. Edited model names to not list the optimization algorithm.
+
 Version 1.20-1
 
 - Added sphere data, ufold data and two rings data.

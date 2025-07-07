@@ -190,7 +190,7 @@ alscal <- function (delta, type="ratio", weightmat, init=NULL, ndim = 2, acc= 1e
        xnew <- xnew %*% xnew_svd$v
     }
     if(verbose>1) cat("*** Stress:",snew, "; Stress 1 (default reported):",sqrt(snew))  
-    out <- list(delta=deltaorig, dhat=delta, confdist=dout, iord=dhat2$iord.prim, conf = xnew, stress=sqrt(snew), spp=spp,  ndim=p, weightmat=weightmato, resmat=resmat, rss=rss, init=xstart, model="ALSCAL SMACOF", niter = itel,nobj = dim(xnew)[1], type = type, call=match.call(), stress.m=snew, alpha = anew, sigma = snew, tdelta=deltaold, parameters=c(kappa=kappa,lambda=lambda), pars=c(kappa=kappa,lambda=lambda), theta=c(kappa=kappa,lambda=lambda),tweightmat=NULL)
+    out <- list(delta=deltaorig, dhat=delta, confdist=dout, iord=dhat2$iord.prim, conf = xnew, stress=sqrt(snew), spp=spp,  ndim=p, weightmat=weightmato, resmat=resmat, rss=rss, init=xstart, model="ALSCAL", niter = itel,nobj = dim(xnew)[1], type = type, call=match.call(), stress.m=snew, alpha = anew, sigma = snew, tdelta=deltaold, parameters=c(kappa=kappa,lambda=lambda), pars=c(kappa=kappa,lambda=lambda), theta=c(kappa=kappa,lambda=lambda),tweightmat=NULL)
     class(out) <- c("smacofP","smacofB","smacof")
     out
   }
