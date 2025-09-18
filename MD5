@@ -1,7 +1,8 @@
-eada1d248f7f0701326f51c25a6de574 *DESCRIPTION
-63d888df7e347a213b7773e6b5f7a019 *NAMESPACE
-c1e8f96aec1b98d46cbcb6924fdafd9c *NEWS
+00c7c3cb362da2487601b85b4b8d93c9 *DESCRIPTION
+89ffe44e21000683872e5f126ffc2e92 *NAMESPACE
+4ed09db9611d9cded063f53a8ad6c9dc *NEWS
 f34707f615a55f9557c035cdc19f6f50 *R/BankingCrisesDistances-data.R
+b066deed64ec45525974bf399ce9b832 *R/alignplot.R
 4e262771ed021450c506ef58b25106e2 *R/alscal.R
 06365f440c837171158199bf50ee298e *R/apStressMin.R
 53e52dd7c286e2a31a3abf5a3fed90bf *R/bcmds.R
@@ -65,6 +66,7 @@ ead757c23cf836ce63cc6937c6042669 *data/ringdat.rda
 642326869c62c8d6fe7c44d3b877e497 *data/spheredat.rda
 6644f9230703d21e726e9be656a69b30 *data/udat.rda
 f4ef66d0e0ac3b2097eb0c514668cb62 *man/BankingCrisesDistances.Rd
+9ed328936b51a3e1e5d20e599193a854 *man/alignplot.Rd
 6fce23f033bfbf977e24e23521d5db60 *man/alscal.Rd
 04cf16c5339804737916749e269e199a *man/apStressMin.Rd
 60dda565e03c2e54ddfc9c0c4f01bf61 *man/bcmds.Rd

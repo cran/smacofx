@@ -1,3 +1,7 @@
+Version 1.22-0
+
+- Added function alignplot.
+
 Version 1.21-1
 
 - Fixed bug in Shepard plot for smds, smda, clca, clda with type="mspline".
