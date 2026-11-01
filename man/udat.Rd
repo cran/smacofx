@@ -2,7 +2,7 @@
 % Please edit documentation in R/udat.R
 \name{udat}
 \alias{udat}
-\title{Noisy Data on a U Fold}
+\title{udat: Noisy data on a U fold}
 \format{
 A 500 x 4 matrix.
 }

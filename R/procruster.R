@@ -2,6 +2,7 @@
 #'
 #'@param x numeric matrix
 #'@return a matrix
+#'@noRd 
 procruster <- function (x) 
 {
     sx <- svd(x)

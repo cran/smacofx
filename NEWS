@@ -1,3 +1,19 @@
+Version 1.26-0
+
+- Fixed bugs in spmds and spmdda that did not register the nu argument for weightmat.  Removed type = "ordinal" from SPMDS and SPMDDA. Added JSS citation. Cleaned up docs. CRAN release.
+
+Version 1.25-0
+
+- Added invisible return values to all plots method. Updated print methods to take a digits arguments. 
+
+Version 1.24-0
+
+- Added invisible return values to all print methods and created summary and print.summary methods.
+
+Version 1.23-0
+
+- Set all default taus s(p)mds, s(P)mda, ecl(p)ca, ecl(p)da to 25% quantiles of the enormed delta. Fixed bug in these functions that caused an error when no tau was supplied. Fixed bug in lmds and bcmds for input deltas being 0; it now exits cleanly with an error message.  
+
 Version 1.22-0
 
 - Added function alignplot.

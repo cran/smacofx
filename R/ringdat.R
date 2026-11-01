@@ -1,4 +1,4 @@
-#' Two interlocking rings
+#' ringdat: Two interlocking rings
 #'
 #' Artifical data of two interlocking rings in 3D space. The first three columns are the coordinates and the last column is a color designation.
 #' 

@@ -6,7 +6,8 @@
 #' @return The scale adjusted configuration.
 #'
 #' @importFrom stats sd
-#' @importFrom smacof Procrustes 
+#' @importFrom smacof Procrustes
+#' @export
 scale_adjust <- function(conf,ref,scale=c("sd","std","proc","none"))
 {
   #conf target, ref reference

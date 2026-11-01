@@ -1,4 +1,4 @@
-#' Elastic Scaling  SMACOF
+#' elscal - Elastic Scaling MDS with SMACOF
 #'
 #' An implementation to minimize elastic scaling stress by majorization with ratio and interval optimal scaling. Uses a repeat loop.
 #' 
@@ -190,3 +190,7 @@ elscal <- function (delta, type=c("ratio","interval"), weightmat, init=NULL, ndi
     class(out) <- c("smacofP","smacofB","smacof")
     out
   }
+
+#' @export
+#' @rdname elscal
+elscalmds <- elscal

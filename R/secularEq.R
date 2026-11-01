@@ -6,6 +6,7 @@
 #' @param b matrix
 #'
 #' @importFrom stats uniroot
+#' @noRd
 secularEq<-function(a,b) {
     n<-dim(a)[1]
     eig<-eigen(a)

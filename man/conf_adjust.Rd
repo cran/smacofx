@@ -2,7 +2,7 @@
 % Please edit documentation in R/conf_adjust.R
 \name{conf_adjust}
 \alias{conf_adjust}
-\title{conf_adjust: a function to procrustes adjust two matrices}
+\title{conf_adjust - a function to procrustes adjust two matrices}
 \usage{
 conf_adjust(conf1, conf2, verbose = FALSE, eps = 1e-12, itmax = 100)
 }
@@ -21,5 +21,5 @@ conf_adjust(conf1, conf2, verbose = FALSE, eps = 1e-12, itmax = 100)
 a list with 'ref.conf' being the reference configuration, 'other.conf' the adjusted coniguration and 'comparison.conf' the comparison configuration
 }
 \description{
-conf_adjust: a function to procrustes adjust two matrices
+conf_adjust - a function to procrustes adjust two matrices
 }

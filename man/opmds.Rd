@@ -2,7 +2,7 @@
 % Please edit documentation in R/opmds.R
 \name{opmds}
 \alias{opmds}
-\title{Nonlinear ratio MDS with optimal power of dissimilarities}
+\title{opmds - Nonlinear ratio MDS with optimal power of dissimilarities}
 \usage{
 opmds(
   delta,
@@ -72,5 +72,5 @@ plot(res)
 
 }
 \seealso{
-See \code{\link[stops]{stops}} for a similar, more flexible idea.
+See \code{\link[stops]{stops}} for a similar, more flexible and more general idea.
 }

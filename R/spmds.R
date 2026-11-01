@@ -1,26 +1,26 @@
-#' Extended Curvilinear (Power) Component Analysis aka Sparsified (POST-) Multidimensional Scaling (SPMDS or SMDS) either as self-organizing or not
+#' eCLPCA - Extended Curvilinear (Power) Component Analysis
 #'
-#' An implementation of extended CLPCA which is a sparsified version of (POST-)MDS by quasi-majorization with ratio, interval and ordinal optimal scaling for dissimilarities and optional power transformations. This is inspired by curvilinear component analysis but works differently: It finds an initial weightmatrix where w_ij(X^0)=0 if d_ij(X^0)>tau and fits a POST-MDS with these weights. Then in each successive iteration step, the weightmat is recalculated so that w_ij(X^(n+1))=0 if d_ij(X^(n+1))>tau. 
-#'
+#' Also known as Sparsified (POST-)Multidimensional Scaling (SPMDS), a historically older name. An implementation of extended CLPCA which is a local version/sparsified version of (POST-)MDS by quasi-majorization with ratio, interval and spline optimal scaling for dissimilarities and optional power transformations. This is inspired by curvilinear component analysis but works differently: It finds an initial weight matrix where w_ij(X^0)=0 if d_ij(X^0)>tau and fits a POST-MDS with these weights. Then in each successive iteration step, the weightmat is recalculated so that w_ij(X^(n+1))=0 if d_ij(X^(n+1))>tau. It can be done as self-organizing or not.
+#' 
 #' There are a wrappers 'smds' and 'eCLCA'  where the exponents are 1. The neighborhood parameter tau is kept fixed in 'spmds', 'smds', 'eCLCA' and 'eCLPCA'. The functions 'so_spmds', 'so_eCLPCA' and 'so_smds', 'so_eCLCA' implement a self-organising principle, where the model is repeatedly fitted for a decreasing sequence of taus.
 #' 
 #' @param delta dist object or a symmetric, numeric data.frame or matrix of distances
-#' @param lambda exponent of the power transformation of the dissimilarities; defaults to 1, which is also the setup of 'smds'
-#' @param kappa exponent of the power transformation of the fitted distances; defaults to 1, which is also the setup of 'smds'.
-#' @param nu exponent of the power of the weighting matrix; defaults to 1 which is also the setup for 'smds'. 
-#' @param tau the boundary/neighbourhood parameter(s) (called lambda in the original paper). For 'spmds' and 'smds' it is supposed to be a numeric scalar (if a sequence is supplied the maximum is taken as tau) and all the transformed fitted distances exceeding tau are set to 0 via the weightmat (assignment can change between iterations). It defaults to the 1\% quantile of delta. For 'so_spmds' tau is supposed to be either a user supplied decreasing sequence of taus or if a scalar the maximum tau from which a decreasing sequence of taus is generated automatically as 'seq(from=tau,to=tau/epochs,length.out=epochs)' and then used in sequence.
-#' @param type what type of MDS to fit. Currently one of "ratio", "interval", "mspline" or "ordinal". Default is "ratio".
-#' @param ties the handling of ties for ordinal (nonmetric) MDS. Possible are "primary" (default), "secondary" or "tertiary".
-#' @param spline.degree Degree of the spline for ‘mspline’ MDS type
-#' @param spline.intKnots Number of interior knots of the spline for ‘mspline’ MDS type
-#' @param weightmat a matrix of finite weights. 
+#' @param lambda exponent of the power transformation of the dissimilarities; defaults to 1.
+#' @param kappa exponent of the power transformation of the fitted distances; defaults to 1.
+#' @param nu exponent of the power of the weighting matrix; defaults to 1.
+#' @param tau the boundary/neighbourhood parameter(s) (called lambda in the original paper). For functions without 'so_' prefix it is supposed to be a numeric scalar (if a sequence is supplied the maximum is taken as tau) and all the transformed fitted distances exceeding tau are set to 0 via the weightmat (assignment can change between iterations). It defaults to the 25\% quantile of the explictly normalized (power transformed) delta. For 'so_' functions tau is supposed to be either a user supplied decreasing sequence of taus or if a scalar the maximum tau from which a decreasing sequence of taus is generated automatically as 'seq(from=tau,to=tau/epochs,length.out=epochs)' and then used in sequence. We recommend not to use the defaults! 
+#' @param type what type of MDS to fit. Currently one of "ratio", "interval", "mspline" or "spline". Default is "ratio".
+#' @param ties  not used.
+#' @param spline.degree Degree of the spline for 'mspline' or 'spline' MDS type
+#' @param spline.intKnots Number of interior knots of the spline for 'mspline' or 'spline'  MDS type
+#' @param weightmat a symmetric matrix of finite weights. If any non-finite values including NA are encountered we set them to 0 internally.  
 #' @param init starting configuration. If NULL (default) we fit a full rstress model.
 #' @param ndim dimension of the configuration; defaults to 2
 #' @param acc numeric accuracy of the iteration. Default is 1e-8.
 #' @param itmax maximum number of iterations. Default is 10000.
 #' @param verbose should fitting information be printed; if > 0 then yes
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
-#' @param epochs for 'so_spmds' and tau being scalar, it gives the number of passes through the data. The sequence of taus created is 'seq(tau,tau/epochs,length.out=epochs)'. If tau is of length >1, this argument is ignored.
+#' @param epochs for 'so_' functions and tau being scalar, it gives the number of passes through the data. The sequence of taus created is 'seq(tau,tau/epochs,length.out=epochs)'. If tau is of length >1, this argument is ignored.
 #' @param traceIt save the iteration progress in a vector (stress values)
 #' 
 #' @return a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym}}). It is a list with the components
@@ -38,18 +38,18 @@
 #' \item nobj: Number of objects
 #' \item type: Type of MDS model
 #' \item weightmat: weighting matrix as supplied
-#' \item stress.m: Default stress (stress-1^2)
-#' \item tweightmat: transformed weighting matrix; it is weightmat but containing all the 0s for the distances set to 0.
+#' \item stress.m: Default stress (square of stress 1, explicitly normalized stress)
+#' \item tweightmat: transformed weighting matrix; it is weightmat^nu and containing all the 0s for the distances set to 0.
 #' \item trace: if 'traceIt=TRUE' a vector with the iteration progress
 #'}
 #'
 #'
 #' @details
-#' The solution is found by "quasi-majorization", which means that the majorization is only real majorization once the weightmat no longer changes. This typically happens after a few iterations. Due to that it can be that in the beginning the stress may not decrease monotonically and that there's a chance it might never. 
+#' The solution is found by the Q-SMACOF algorithm which is monotnic only if the weightmat no longer changes. This typically happens after a few iterations. Due to that it can be that in the beginning the stress may not decrease monotonically and that there's a chance it might never. 
 #' 
 #' If tau is too small it may happen that all distances for one i to all j are zero and then there will be an error, so make sure to set a larger tau.
 #'
-#' In the standard functions 'spmds' and 'smds' we keep tau fixed throughout. This means that if tau is large enough, then the result is the same as the corresponding MDS. In the orginal publication the idea was that of a self-organizing map which decreased tau over epochs (i.e., passes through the data). This can be achieved with our function 'so_spmds' 'so_smds' which creates a vector of decreasing tau values, calls the function 'spmds' with the first tau, then supplies the optimal configuration obtained as the init for the next call with the next tau and so on. 
+#' In the standard functions without 'so_' suffix  we keep tau fixed throughout. This means that if tau is large enough, then the result is the same as the corresponding MDS. In the orginal publication the idea was that of a self-organizing map which decreased tau over epochs (i.e., passes through the data). This can be achieved with our functions prefixed with 'so_'  which create a vector of decreasing tau values, calls the function fitting function with the first tau, then supplies the optimal configuration obtained as the init for the next call with the next tau and so on. 
 #'
 #' 
 #' @importFrom stats dist as.dist quantile
@@ -57,11 +57,12 @@
 #' 
 #' @examples
 #' dis<-smacof::morse
-#' res<-spmds(dis,type="interval",kappa=2,lambda=2,tau=0.3,itmax=100) #use higher itmax
-#' res2<-smds(dis,type="interval",tau=0.3,itmax=500,traceIt=TRUE) #use higher itmax
-#' #Aliases
 #' resa<-eCLPCA(dis,type="interval",kappa=2,lambda=2,tau=0.3,itmax=100) #use higher itmax
 #' res2a<-eCLCA(dis,type="interval",tau=0.3,itmax=500,traceIt=TRUE) #use higher itmax
+#'
+#' #Aliases older names
+#' res<-spmds(dis,type="interval",kappa=2,lambda=2,tau=0.3,itmax=100) #use higher itmax
+#' res2<-smds(dis,type="interval",tau=0.3,itmax=500,traceIt=TRUE) #use higher itmax
 #' 
 #' res
 #' res2
@@ -78,7 +79,6 @@
 #' # We use Quasi-Majorization
 #' res2$trace
 #'
-
 #' 
 #' \donttest{
 #' ## Self-organizing map style (as in the clca publication)
@@ -98,28 +98,29 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
     r <- kappa/2
     ## -- Setup for MDS type
     if(missing(type)) type <- "ratio"
-    type <- match.arg(type, c("ratio", "interval", "ordinal", "mspline","spline"),several.ok = FALSE)
-    if(type %in% c("ordinal","mspline")) lambda <- 1 #We dont allow powers for dissimilarities in nonmetric and spline MDS
+    type <- match.arg(type, c("ratio", "interval", "mspline","spline"),several.ok = FALSE) #no ordinal allowed
     #    "mspline"), several.ok = FALSE)
     trans <- type
     typo <- type
     if (trans=="ratio"){
     trans <- "none"
     }
-    else if (trans=="ordinal" & ties=="primary"){
-    trans <- "ordinalp"
-    typo <- "ordinal (primary)"
-   } else if(trans=="ordinal" & ties=="secondary"){
-    trans <- "ordinals"
-    typo <- "ordinal (secondary)"
-  } else if(trans=="ordinal" & ties=="tertiary"){
-    trans <- "ordinalt"
-    typo <- "ordinal (tertiary)"
-  } else if(trans=="spline"){
+#    else if (trans=="ordinal" & ties=="primary"){
+#    trans <- "ordinalp"
+#    typo <- "ordinal (primary)"
+#   } else if(trans=="ordinal" & ties=="secondary"){
+#    trans <- "ordinals"
+#    typo <- "ordinal (secondary)"
+#  } else if(trans=="ordinal" & ties=="tertiary"){
+#    trans <- "ordinalt"
+#    typo <- "ordinal (tertiary)"
+ if(trans=="spline"){
     trans <- "mspline"
     type <- "mspline"
     typo <- "mspline"
-  }
+ }
+   if(type %in% c("mspline", "spline")) lambda <- 1 #We dont allow powers for dissimilarities in nonmetric and spline MDS
+  
     n <- nrow (delta)
     normi <- 0.5
     ##normi <- n #if normi=n we can use the iord structure in plot.smacofP
@@ -130,18 +131,19 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
     labos <- rownames(delta) #labels
     deltaorig <- delta
     delta <- delta^lambda
-    weightmato <- weightmat
-    weightmat <- weightmat^nu
+    weightmato <- weightmat #this gets returned as supplied
+    weightmat <- weightmato^nu
     weightmat[!is.finite(weightmat)] <- 0
+    diag(weightmat) <- 0
     delta <- delta / enorm (delta, weightmat)
-    if(missing(tau)) tau <- stats::quantile(delta[delta>0],0.1)
+    if(missing(tau)) tau <- stats::quantile(delta,0.25)
     if(length(tau)>1)
     {
         warning("Supplied tau is of length >1. The min(tau) was used as tau.")
         tau <- min(tau)
     }
     if(tau<=0) stop("tau must be positive.")
-    if(verbose>0) cat(paste("Fitting",type,"spmds with lambda=",lambda, "kappa=",kappa,"nu=",nu, "and tau=",tau,"\n"))
+    if(verbose>0) cat(paste("Fitting",type,"spmds with lambda =",lambda, "kappa =",kappa,"nu =",nu, "and tau =",tau,"\n"))
     disobj <- smacof::transPrep(as.dist(delta), trans = trans, spline.intKnots = spline.intKnots, spline.degree = spline.degree)
     ## Add an intercept to the spline base transformation
     if (trans == "mspline") disobj$base <- cbind(rep(1, nrow(disobj$base)), disobj$base)
@@ -157,7 +159,7 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
     nn <- diag (n)
     dold <- sqdist (xold) #squared distances
     doldpow <- mkPower(dold,kappa/2)# distances^kappa
-    weightmat[doldpow>tau] <- 0 ##CCA penalty
+    weightmat[doldpow>tau] <- 0 ##  CCA penalty
     ##first optimal scaling
     eold <- as.dist(mkPower(dold,r))
     dhat <- smacof::transform(eold, disobj, w = as.dist(weightmat), normq = normi)
@@ -171,8 +173,9 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
     tracev <- NULL
     if(isTRUE(traceIt)) tracev <- rep(NA,itmax)
     ## Optimizing
+    ## Optimization scheme X|W -> W|X -> stress -> X|W etc.  
     repeat {
-      if(tau<=min(doldpow[lower.tri(doldpow)])) stop("Current tau is lower than the smallest fitted distance (so all distances are set to 0). Increase tau.")
+      if(tau <= min(doldpow[lower.tri(doldpow)])) stop("Current tau is lower than the smallest fitted distance (so all distances are set to 0). Increase tau.")
       p1 <- mkPower (dold, r - 1)
       p2 <- mkPower (dold, (2 * r) - 1)
  
@@ -192,11 +195,10 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
       dnew <- sqdist (xnew)
       dnewpow <- mkPower(dnew,kappa/2)
       ### We always set the 0 freshly, so it is possible that a w_{ij} can change from 0 to >0 again
-      weightmat <- weightmato #new
-      ## or should we never change the 0 back once it was found? I'm sure that then the algorithm is majorizing this objective; it also coincides with the above if the d_{ij} are monotonically decreasing.
-      ## test this 
+      weightmat <- weightmato^nu  #Changed this on 20/11/26 was a bug where we did not take the exponent
       weightmat[!is.finite(weightmat)] <- 0
-      weightmat[dnewpow>tau] <- 0
+      diag(weightmat) <-  0
+      weightmat[dnewpow > tau] <- 0 ## CCA penalty
       ##optimal scaling
       e <- as.dist(mkPower(dnew,r)) #I need the dist(x) here for interval
       dhat2 <- smacof::transform(e, disobj, w = as.dist(weightmat), normq = normi)  ## dhat update
@@ -279,7 +281,7 @@ spmds <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="prim
     #stressen <- sum(weightmat*(doute-delta)^2)
     if(verbose>1) cat("*** Stress:",snew, "; Stress-1 (default reported):",sqrt(snew),"\n")
     #delta is input delta, tdelta is input delta with explicit transformation and normalized, dhat is dhats 
-    out <- list(delta=deltaorig, dhat=delta, confdist=dout, iord=dhat2$iord.prim, conf = xnew, stress=sqrt(snew), spp=spp,  ndim=p, weightmat=weightmato, resmat=resmat, rss=rss, init=xstart, model="power SMDS", niter = itel, nobj = dim(xnew)[1], type = type, call=match.call(), stress.m=snew, alpha = anew, sigma = snew, tdelta=deltaold, parameters=c(kappa=kappa,lambda=lambda,nu=nu,tau=tau), pars=c(kappa=kappa,lambda=lambda,nu=nu,tau=tau), theta=c(kappa=kappa,lambda=lambda,nu=nu,tau=tau),tweightmat=weightmat, trace = tracev)
+    out <- list(delta=deltaorig, dhat=delta, confdist=dout, iord=dhat2$iord.prim, conf = xnew, stress=sqrt(snew), spp=spp,  ndim=p, weightmat=weightmato, resmat=resmat, rss=rss, init=xstart, model="SPMDS", niter = itel, nobj = dim(xnew)[1], type = type, call=match.call(), stress.m=snew, alpha = anew, sigma = snew, tdelta=deltaold, parameters=c(kappa=kappa,lambda=lambda,nu=nu,tau=tau), pars=c(kappa=kappa,lambda=lambda,nu=nu,tau=tau), theta=c(kappa=kappa,lambda=lambda,nu=nu,tau=tau),tweightmat=weightmat, trace = tracev)
     class(out) <- c("smacofP","smacofB","smacof")
     out
   }
@@ -292,7 +294,10 @@ smds <- function(delta, tau, type="ratio", ties="primary", weightmat=1-diag(nrow
     type <- match.arg(type, c("ratio", "interval", "ordinal","mspline","spline"), several.ok = FALSE)
     if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
     if(!isSymmetric(delta)) stop("delta is not symmetric.\n")
-    out <- spmds(delta=delta, lambda=1, kappa=1, nu=1, tau=tau, type=type, ties=ties, weightmat=weightmat, init=init, ndim=ndim, acc=acc, itmax=itmax, verbose=verbose, principal=principal,traceIt=traceIt,  spline.degree=spline.degree, spline.intKnots=spline.intKnots)
+    weightmato <- weightmat #so this can get returned as supplied
+    weightmat[!is.finite(weightmat)] <- 0
+    if(missing(tau)) tau <- stats::quantile((delta/enorm(delta,weightmat)),0.25)
+    out <- spmds(delta=delta, lambda=1, kappa=1, nu=1, tau=tau, type=type, ties=ties, weightmat=weightmato, init=init, ndim=ndim, acc=acc, itmax=itmax, verbose=verbose, principal=principal,traceIt=traceIt,  spline.degree=spline.degree, spline.intKnots=spline.intKnots)
     out$model <- "SMDS"
     out$call <- cc
     out$parameters <- out$theta <- out$pars  <- c(tau=tau)
@@ -359,7 +364,10 @@ eCLCA <- function(delta, tau, type="ratio", ties="primary", weightmat=1-diag(nro
     type <- match.arg(type, c("ratio", "interval","mspline","spline"), several.ok = FALSE)
     if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
     if(!isSymmetric(delta)) stop("delta is not symmetric.\n")
-    out <- spmds(delta=delta, lambda=1, kappa=1, nu=1, tau=tau, type=type, ties=ties, weightmat=weightmat, init=init, ndim=ndim, acc=acc, itmax=itmax, verbose=verbose, principal=principal,traceIt=traceIt,  spline.degree=spline.degree, spline.intKnots=spline.intKnots)
+    weightmato <- weightmat
+    weightmat[!is.finite(weightmat)] <- 0
+    if(missing(tau)) tau <- stats::quantile((delta/enorm(delta,weightmat)),0.25)
+    out <- spmds(delta=delta, lambda=1, kappa=1, nu=1, tau=tau, type=type, ties=ties, weightmat=weightmato, init=init, ndim=ndim, acc=acc, itmax=itmax, verbose=verbose, principal=principal,traceIt=traceIt,  spline.degree=spline.degree, spline.intKnots=spline.intKnots)
     out$model <- "eCLCA"
     out$call <- cc
     out$parameters <- out$theta <- out$pars  <- c(tau=tau)
@@ -373,7 +381,10 @@ eCLPCA <- function (delta, lambda=1, kappa=1, nu=1, tau, type="ratio", ties="pri
     type <- match.arg(type, c("ratio", "interval","mspline","spline"), several.ok = FALSE)
     if(inherits(delta,"dist") || is.data.frame(delta)) delta <- as.matrix(delta)
     if(!isSymmetric(delta)) stop("delta is not symmetric.\n")
-    out <- spmds(delta=delta, lambda=lambda, kappa=kappa, nu=nu, tau=tau, type=type, ties=ties, weightmat=weightmat, init=init, ndim=ndim, acc=acc, itmax=itmax, verbose=verbose, principal=principal,traceIt=traceIt,  spline.degree=spline.degree, spline.intKnots=spline.intKnots)
+    weightmato <- weightmat
+    weightmat[!is.finite(weightmat)] <- 0
+    if(missing(tau)) tau <- stats::quantile((delta^lambda/enorm(delta^lambda,weightmat^nu)),0.25)
+    out <- spmds(delta=delta, lambda=lambda, kappa=kappa, nu=nu, tau=tau, type=type, ties=ties, weightmat=weightmato, init=init, ndim=ndim, acc=acc, itmax=itmax, verbose=verbose, principal=principal,traceIt=traceIt,  spline.degree=spline.degree, spline.intKnots=spline.intKnots)
     out$model <- "eCLPCA"
     out$call <- cc
     out$parameters <- out$pars <- out$theta <- c(kappa=kappa,lambda=lambda,nu=nu,tau=tau)

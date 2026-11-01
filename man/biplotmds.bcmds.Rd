@@ -2,7 +2,7 @@
 % Please edit documentation in R/biplotmds.bcmds.R
 \name{biplotmds.bcmds}
 \alias{biplotmds.bcmds}
-\title{S3 method for bcmds objects}
+\title{biplotmds method for bcmds objects}
 \usage{
 \method{biplotmds}{bcmds}(object, extvar, scale = TRUE)
 }
@@ -19,7 +19,7 @@ R2vec: Vector containing the R2 values.
 See also \code{\link[smacof]{biplotmds}} for the plot method.
 }
 \description{
-S3 method for bcmds objects
+biplotmds method for bcmds objects
 }
 \details{
 If a model for individual differences is provided, the external

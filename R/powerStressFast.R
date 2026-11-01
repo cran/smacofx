@@ -1,7 +1,7 @@
 
-#' Power stress minimization by NEWUOA (nloptr)
+#' Ratio Power Stress MDS (POST-MDS) with NEWUOA (nloptr)
 #'
-#' An implementation to minimize power stress by a derivative-free trust region optimization algorithm (NEWUOA). Much faster than majorizing as used in powerStressMin but perhaps less accurate. 
+#' An implementation to minimize power stress by a derivative-free trust region optimization algorithm (NEWUOA). Can't do optimal scaling. Much faster than majorizing as used in powerStressMin but perhaps less accurate. 
 #' 
 #' @param delta dist object or a symmetric, numeric data.frame or matrix of distances
 #' @param kappa power of the transformation of the fitted distances; defaults to 1

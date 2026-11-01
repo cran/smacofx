@@ -1,5 +1,5 @@
 
-#' Restricted Power Stress SMACOF
+#' rpostmds - Restricted Power Stress MDS (RPOST-MDS) with SMACOF
 #'
 #' An implementation to minimize restricted power stress by majorization with ratio or interval optimal scaling. Restricted means that the same power is used for both dissimilarities and fitted distances. Uses a repeat loop.
 #' 

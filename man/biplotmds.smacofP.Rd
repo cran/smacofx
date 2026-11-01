@@ -2,7 +2,7 @@
 % Please edit documentation in R/biplotmds.smacofP.R
 \name{biplotmds.smacofP}
 \alias{biplotmds.smacofP}
-\title{S3 method for smacofP objects}
+\title{biplotmds method for smacofP objects}
 \usage{
 \method{biplotmds}{smacofP}(object, extvar, scale = TRUE)
 }
@@ -19,7 +19,7 @@ R2vec: Vector containing the R2 values.
 See also \code{\link[smacof]{biplotmds}} for the plot method.
 }
 \description{
-S3 method for smacofP objects
+biplotmds method for smacofP objects
 }
 \details{
 If a model for individual differences is provided, the external

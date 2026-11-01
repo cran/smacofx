@@ -5,7 +5,7 @@
 \alias{bcStressMin}
 \alias{bcstressMin}
 \alias{boxcoxmds}
-\title{Box-Cox MDS}
+\title{bcmds - Box-Cox MDS}
 \usage{
 bcmds(
   delta,
@@ -76,9 +76,9 @@ boxcoxmds(
 )
 }
 \arguments{
-\item{delta}{dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object}
+\item{delta}{dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object. All non-diagonal entries must be positive.}
 
-\item{mu}{mu parameter. Should be 0 or larger for everything working ok. If mu<0 it works but I find the MDS model is strange and normalized stress tends towards 0 regardless of fit. Use normalized stress at your own risk in that case.}
+\item{mu}{mu parameter. Should be 0 or larger for everything working ok. If mu<0 it still works, but the MDS model is conceptually strange and normalized stress tends towards 0 regardless of fit. Use normalized stress at your own risk in that case.}
 
 \item{lambda}{lambda parameter. Must be larger than 0.}
 
@@ -135,7 +135,9 @@ and some additional components
 This function minimizes the Box-Cox Stress of Chen & Buja (2013) via gradient descent. This is a ratio metric scaling method. The transformations are not straightforward to interpret but mu is associated with fitted distances in the configuration and lambda with the dissimilarities. Concretely for fitted distances (attraction part) it is \eqn{BC_{mu+lambda}(d(X))} and for the repulsion part it is \eqn{delta^lambda BC_{mu}(d(X))} with BC being the one-parameter Box-Cox transformation.
 }
 \details{
-For numerical reasons with certain parameter combinations, the normalized stress uses a configuration as worst result where every d(X) is 0+addD0. The same number is not added to the delta so there is a small inaccuracy of the normalized stress (but negligible if min(delta)>>addD0). Also, for mu<0 or mu+lambda<0 the normalization cannot generally be trusted (in the worst case of D(X)=0 one would have an 0^(-a)).
+For numerical reasons with certain parameter combinations, the normalized stress uses a configuration as the "worst case result" where every d(X) is 0+addD0. The same number is not added to the delta so there is a small inaccuracy of the normalized stress (but negligible if min(delta)>>addD0). Also, for mu<0 or mu+lambda<0 the normalization cannot generally be trusted (in the worst case of D(X)=0 one would have an 0^(-a)).
+
+Note that input delta that are zero in the off-diagonals can make it impossible to calculate the gradient and then the program terminates and returns the gradient for inspection.
 }
 \examples{
 dis<-smacof::kinshipdelta
@@ -146,5 +148,5 @@ plot(res)
 
 }
 \author{
-Lisha Chen & Thomas Rusch
+Thomas Rusch based on code by Lisha Chen
 }

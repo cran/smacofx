@@ -5,7 +5,7 @@
 \alias{rstressMin}
 \alias{rstressmds}
 \alias{rstress}
-\title{R stress SMACOF}
+\title{rstressmds - R Stress MDS with SMACOF}
 \usage{
 rStressMin(
   delta,
@@ -127,7 +127,7 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym
 }
 }
 \description{
-An implementation to minimize r-stress by majorization with ratio, interval, monotonic spline and ordinal optimal scaling. Uses a repeat loop.
+An implementation to minimize r-stress by majorization with ratio, interval, monotonic spline and ordinal optimal scaling.
 }
 \examples{
 dis<-smacof::kinshipdelta

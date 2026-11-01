@@ -2,7 +2,7 @@
 % Please edit documentation in R/ringdat.R
 \name{ringdat}
 \alias{ringdat}
-\title{Two interlocking rings}
+\title{ringdat: Two interlocking rings}
 \format{
 A 500 x 4 matrix.
 }

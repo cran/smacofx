@@ -4,6 +4,7 @@
 #' @param x matrix
 #' @param r numeric (power)
 #' @return a matrix
+#' @noRd
 mkPower<-function(x,r) {
     n<-nrow(x)
     tmp <- abs((x+diag(n))^r)-diag(n)

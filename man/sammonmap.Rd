@@ -2,7 +2,7 @@
 % Please edit documentation in R/sammonmap.R
 \name{sammonmap}
 \alias{sammonmap}
-\title{Sammon Mapping SMACOF}
+\title{sammonmap - Sammon Mapping MDS with SMACOF}
 \usage{
 sammonmap(
   delta,
@@ -56,7 +56,7 @@ a 'smacofP' object (inheriting from smacofB, see \code{\link[smacof]{smacofSym}}
 }
 }
 \description{
-An implementation to minimize Sammon stress by majorization with ratio and interval optimal scaling. Uses a repeat loop.
+An implementation to minimize Sammon stress by majorization with ratio and interval optimal scaling.
 }
 \examples{
 dis<-smacof::kinshipdelta

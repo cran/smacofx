@@ -2,7 +2,7 @@
 % Please edit documentation in R/corpsepaint-data.R
 \name{corpsepaint}
 \alias{corpsepaint}
-\title{Corpse Paint}
+\title{corpsepaint: Images of Corpse Paint}
 \format{
 A 8100 x 32 matrix
 }

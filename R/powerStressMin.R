@@ -1,9 +1,6 @@
-
-
-
-#' Power Stress SMACOF
+#' postmds - Power Stress MDS (POST-MDS) with SMACOF
 #'
-#' An implementation to minimize power stress by majorization with ratio or interval optimal scaling. Usually more accurate but slower than powerStressFast. Uses a repeat loop.
+#' An implementation to minimize power stress by majorization with ratio or interval optimal scaling. Usually more accurate but slower than \code{\link{powerStressFast}}. 
 #' 
 #' @param delta dist object or a symmetric, numeric data.frame or matrix of distances
 #' @param kappa power of the transformation of the fitted distances; defaults to 1

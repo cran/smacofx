@@ -1,0 +1,29 @@
+bibentry(bibtype = "Article",
+  title          = "Flexible Multidimensional Scaling with the {R} Package {smacofx}",
+  author         = c(person(given = "Thomas", family = "Rusch", email = "Thomas.Rusch@wu.ac.at"),
+                     person(given = "Patrick", family = "Mair"),
+                     person(given = "Jan", family = "de Leeuw"),
+                     person(given = "Kurt", family = "Hornik")),
+  journal        = "Journal of Statistical Software",
+  year           = "2026",
+  volume         = "117",
+  number         = "7",
+  pages          = "1--42",
+  doi            = "10.18637/jss.v117.i07",
+  header         = "To cite smacofx in publications use:"
+)
+
+
+bibentry(bibtype = "Article",
+  title          = "Multidimensional Scaling With Heaviside Weighting: Extensions to Curvilinear Component Analysis and Curvilinear Distance Analysis",
+  author         = c(person(given = "Thomas", family = "Rusch", email = "Thomas.Rusch@wu.ac.at")),
+  journal        = "Stat",
+  year           = "2025",
+  volume         = "14",
+  number         = "3",
+  pages          = "e70086",
+  doi            = "10.1002/sta4.70086",
+  header         = "When using eCLCA, eCLDA, eCLPCA or eCLPDA in publications use:"
+)
+
+

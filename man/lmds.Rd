@@ -2,7 +2,7 @@
 % Please edit documentation in R/lmds.R
 \name{lmds}
 \alias{lmds}
-\title{Local MDS}
+\title{lmds - Local MDS by Chen and Buja}
 \usage{
 lmds(
   delta,
@@ -20,7 +20,7 @@ lmds(
 )
 }
 \arguments{
-\item{delta}{dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object}
+\item{delta}{dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object. All non-diagonal entries must be positive.}
 
 \item{k}{the k neighbourhood parameter}
 
@@ -36,7 +36,7 @@ lmds(
 
 \item{acc}{accuracy (lowest stepsize). Defaults to 1e-5.}
 
-\item{init}{initial configuration. If NULL a classical scaling solution is used.}
+\item{init}{initial configuration. If NULL a Torgerson scaling solution is used.}
 
 \item{verbose}{prints info if > 0 and progress if > 1.}
 
@@ -71,10 +71,12 @@ and some additional components
 }
 }
 \description{
-This function minimizes the Local MDS Stress of Chen & Buja (2006) via gradient descent. This is a ratio metric scaling method.
+This function minimizes the Local MDS Stress of Chen & Buja (2009) via gradient descent. This is a ratio metric scaling method.
 }
 \details{
 Note that k and tau are not independent. It is possible for normalized stress to become negative if the tau and k combination is so that the absolute repulsion for the found configuration dominates the local stress substantially less than the repulsion term does for the solution of D(X)=Delta, so that the local stress difference between the found solution and perfect solution is nullified. This can typically be avoided if tau is between 0 and 1. If not, set k and or tau to a smaller value.
+
+Note that input delta that are zero in the off-diagonals can make it impossible to calculate the gradient and then the program terminates and returns the gradient for inspection.
 }
 \examples{
 dis<-smacof::kinshipdelta
@@ -85,5 +87,5 @@ plot(res)
 
 }
 \author{
-Lisha Chen & Thomas Rusch
+Thomas Rusch based on code by Lisha Chen
 }

@@ -144,5 +144,6 @@ plot.cmdscalex <- function(x, plot.type = "confplot", plot.dim = c(1, 2), col, l
     if (missing(xlab)) xlab <- paste("Dissimilarity") else xlab <- xlab
     if (missing(ylab)) ylab <- paste("Frequency") else ylab <- ylab
     graphics::hist(x$delta, main = main, xlab = xlab, ylab = ylab, col = col.hist, ...) 
-  }
+   }
+  invisible(x)
  }

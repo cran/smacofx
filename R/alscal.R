@@ -1,4 +1,4 @@
-#' ALSCAL - MDS via S-Stress Minimization
+#' alscal - ALSCAL MDS via S-Stress Minimization with SMACOF
 #'
 #' An implementation to minimize s-stress by majorization with ratio and interval optimal scaling. 
 #' 

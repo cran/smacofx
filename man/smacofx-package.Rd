@@ -21,15 +21,15 @@ Models:
 \item apStressMin... approximate POST-MDS with ratio, interval optimal scaling
 \item rpowerStressMin... restricted POST-MDS with ratio, interval optimal scaling
 \item clca ... curvilinear component analysis with ratio optimal scaling
-\item clda ... curvilinear distance analysis with ratio optimal scaling (ie.e. clca with Isomap distances)
+\item clda ... curvilinear distance analysis with ratio optimal scaling (i.e. clca with Isomap distances)
 \item bcmds ... Box-Cox MDS with ratio optimal scaling
 \item lmds... Local MDS with ratio optimal scaling
 \item sammonmap... Sammon mapping with ratio, interval optimal scaling
-\item eCLPA aka smdda ... sparsified multidimensional distance analsysis with ratio, interval, spline scaling (this is smds with Isomap distances) 
-\item eCLPDA aka spmdda ... sparsified power multidimensional distance analsysis with ratio, interval, spline scaling (this is spmds with Isomap distances)  
-\item eCLCA aka smds ... sparsified multidimensional scaling with ratio, interval, spline scaling (extended CLCA, so fitted distances larger than tau are weighted with 0)
-\item eCLPCA spmds ... sparsified multidimensional scaling with ratio, interval, spline scaling (extended CLPCA, so fitted distances larger than tau are weighted with 0)
-\item opmds ... nonlinear MDS with optimal power for the dissimilarities.
+\item eCLPCA aka SPMDS ... extended curvilinear power component analysis aka sparsified power multidimensional scaling with ratio, interval, spline optimal scaling.
+\item eCLPDA aka SPMDDA ... extended curvilinear power distance analysis aka sparsified power multidimensional distance analysis with ratio, interval, spline scaling (this is eCLPCA with Isomap distances)  
+\item eCLCA aka SMDS ... extended curvilinear power component analysis aka sparsified multidimensional scaling with ratio, interval, spline optimal scaling 
+\item eCLDA aka SMDDA ...  extended curvilinear distance analysis aka sparsified multidimensional distance analysis with ratio, interval, spline optimal scaling 
+\item opmds ... nonlinear MDS with optimal power for the dissimilarities
 }
 
 
@@ -82,6 +82,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Thomas Rusch \email{thomas.rusch@wu.ac.at} (\href{https://orcid.org/0000-0002-7773-2096}{ORCID})
   \item Jan de Leeuw
   \item Lisha Chen
   \item Patrick Mair \email{mair@fas.harvard.edu} (\href{https://orcid.org/0000-0003-0100-6511}{ORCID})

@@ -1,12 +1,13 @@
-#' Local MDS 
+#' lmds - Local MDS by Chen and Buja 
 #'
-#' This function minimizes the Local MDS Stress of Chen & Buja (2006) via gradient descent. This is a ratio metric scaling method. 
+#' This function minimizes the Local MDS Stress of Chen & Buja (2009) via gradient descent. This is a ratio metric scaling method. 
+#'
 #' 
-#' @param delta dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object
+#' @param delta dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object. All non-diagonal entries must be positive. 
 #' @param k the k neighbourhood parameter
 #' @param tau the penalty parameter (suggested to be in [0,1]) 
 #' @param type what type of MDS to fit. Only "ratio" currently. 
-#' @param init initial configuration. If NULL a classical scaling solution is used. 
+#' @param init initial configuration. If NULL a Torgerson scaling solution is used. 
 #' @param ndim the dimension of the configuration
 #' @param weightmat a matrix of finite weights. Not implemented.
 #' @param itmax number of optimizing iterations, defaults to 5000.
@@ -15,9 +16,11 @@
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
 #' @param normconf normalize the configuration to sum(delta^2)=1 (as in the power stresses). Note that then the distances in confdist do not match the manually calculated ones.
 #'
-#' @author Lisha Chen & Thomas Rusch
+#' @author Thomas Rusch based on code by Lisha Chen 
 #'
-#' @details Note that k and tau are not independent. It is possible for normalized stress to become negative if the tau and k combination is so that the absolute repulsion for the found configuration dominates the local stress substantially less than the repulsion term does for the solution of D(X)=Delta, so that the local stress difference between the found solution and perfect solution is nullified. This can typically be avoided if tau is between 0 and 1. If not, set k and or tau to a smaller value. 
+#' @details Note that k and tau are not independent. It is possible for normalized stress to become negative if the tau and k combination is so that the absolute repulsion for the found configuration dominates the local stress substantially less than the repulsion term does for the solution of D(X)=Delta, so that the local stress difference between the found solution and perfect solution is nullified. This can typically be avoided if tau is between 0 and 1. If not, set k and or tau to a smaller value.
+#'
+#' Note that input delta that are zero in the off-diagonals can make it impossible to calculate the gradient and then the program terminates and returns the gradient for inspection.  
 #'
 #'
 #' @return an object of class 'lmds' (also inherits from 'smacofP'). See \code{\link{powerStressMin}}. It is a list with the components as in power stress
@@ -109,7 +112,8 @@ lmds <- function(delta,k=2,tau=1,type="ratio",ndim=2,weightmat=1-diag(nrow(delta
   i <- 0
 
 while ( stepsize > acc && i < niter)
-  {
+    {
+    #cat(paste0("For debug: i=",i," s1=",s1, "s0= ",s0),"\n")    
     if (s1 >= s0 && i>1)
      {
        stepsize<- 0.5*stepsize
@@ -126,9 +130,13 @@ while ( stepsize > acc && i < niter)
       M <- Dnu*D1mulam2-D1mu2*(Dnulam+t*(!Inb1))
       E <- matrix(rep(1,n*d),n,d)
       Grad <- X0*(M%*%E)-M%*%X0
-      normgrad <- (norm(X0)/norm(Grad))*Grad
+      if(is.na(norm(Grad))) {
+          cat("The 0-norm of the gradient cannot be calculated. Most likely there are 'NA' in the gradient, resulting from 0s in the input matrix. I returned the gradient as the object, please inspect it.\n")
+          return(Grad)
+      }
+      normgrad <- (base::norm(X0)/base::norm(Grad))*Grad #issue in norm(Grad) if some off diagonal delta are 0.
       X1 <- X0 - stepsize*normgrad
-     }
+    }
     i <- i+1
     s0 <- s1
     D1 <- as.matrix(dist(X1))
@@ -173,9 +181,9 @@ while ( stepsize > acc && i < niter)
     s1 <-    sum(Dnu*(D1mulam-1))/(mu+1/lambda)-sum((D1mu-1)*Dnulam)/mu-t*sum((D1mu-1)*(1-Inb1))/mu
      #   }
     ## Printing and Plotting
-     if(verbose > 1 & (i+1)%%100/verbose==0)
+     if(verbose > 1 && (i+1)%%100/verbose==0)
       {
-        print (paste("niter=",i+1," stress=",round(s1,5), sep=""))
+        cat(paste("niter=",i+1," stress=",round(s1,5), sep=""),"\n")
       }
 
   }

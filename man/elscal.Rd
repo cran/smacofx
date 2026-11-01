@@ -2,9 +2,22 @@
 % Please edit documentation in R/elscal.R
 \name{elscal}
 \alias{elscal}
-\title{Elastic Scaling  SMACOF}
+\alias{elscalmds}
+\title{elscal - Elastic Scaling MDS with SMACOF}
 \usage{
 elscal(
+  delta,
+  type = c("ratio", "interval"),
+  weightmat,
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  principal = FALSE
+)
+
+elscalmds(
   delta,
   type = c("ratio", "interval"),
   weightmat,

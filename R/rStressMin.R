@@ -1,6 +1,6 @@
-#' R stress SMACOF
+#' rstressmds - R Stress MDS with SMACOF
 #'
-#' An implementation to minimize r-stress by majorization with ratio, interval, monotonic spline and ordinal optimal scaling. Uses a repeat loop.
+#' An implementation to minimize r-stress by majorization with ratio, interval, monotonic spline and ordinal optimal scaling. 
 #' 
 #' @param delta dist object or a symmetric, numeric data.frame or matrix of distances
 #' @param r power of the transformation of the fitted distances (corresponds to kappa/2 in power stress); defaults to 0.5 for standard stress

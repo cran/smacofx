@@ -1,6 +1,6 @@
-#' Approximate Power Stress MDS 
+#' apostmds- Approximate Power Stress MDS with SMACOF
 #'
-#' An implementation to minimize approximate power stress by majorization with ratio or interval optimal scaling. This approximates the power stress objective in such a way that it can be fitted with SMACOF without distance transformations. See Rusch et al. (2021) for details.  
+#' An implementation to minimize approximate power stress by majorization. This approximates the power stress objective in such a way that it can be fitted with SMACOF without distance transformations. See Rusch et al. (2021) for details.  
 #' 
 #' @param delta dist object or a symmetric, numeric data.frame or matrix of distances
 #' @param kappa power of the transformation of the fitted distances; defaults to 1

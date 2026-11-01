@@ -2,7 +2,7 @@
 % Please edit documentation in R/spheredat.R
 \name{spheredat}
 \alias{spheredat}
-\title{Clelia curve on a sphere}
+\title{spheredat: Clelia curve on a sphere}
 \format{
 A 500 x 4 matrix.
 }

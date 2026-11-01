@@ -1,4 +1,4 @@
-#' Responses to the SCC scale and CSII scale (n=1013). 
+#' koller: Responses to the SCC scale and CSII scale (n=1013). 
 #'
 #' 1013 respondents answered the items of the consumer susceptibility top interpersonal influence (CSII) and the self-concept clarity (SCC) scale. The answers are on a five-point-Likert scale with 1 meaning "fully agree" and 5 meaning "fully disagree". Note that on scc the 10th item is reversed coded to align with the other items.
 #'

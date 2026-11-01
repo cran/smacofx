@@ -2,7 +2,7 @@
 % Please edit documentation in R/alscal.R
 \name{alscal}
 \alias{alscal}
-\title{ALSCAL - MDS via S-Stress Minimization}
+\title{alscal - ALSCAL MDS via S-Stress Minimization with SMACOF}
 \usage{
 alscal(
   delta,

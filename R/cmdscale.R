@@ -1,13 +1,13 @@
-#' Wrapper to \code{cmdscale} for S3 class
+#' Wrapper to \code{cmdscale} 
 #'
-#' @details overloads stats::cmdscale turns on the liosting and adds slots and class attributes for which there are methods. 
+#' @details overloads \code{\link[stats]{cmdscale}} and adds slots and class attributes for which there are methods. 
 #'  
 #' @param d a distance structure such as that returned by 'dist' or a full symmetric matrix containing the dissimilarities
 #' @param k the maximum dimension of the space which the data are to be represented in
 #' @param eig indicates whether eigenvalues should be returned. Defaults to TRUE. 
 #' @param ... additional parameters passed to cmdscale. See \code{\link{cmdscale}} 
 #'
-#' @return Object of class 'cmdscalex' and 'cmdscale' extending \code{\link{cmdscale}}. This wrapper always returns the results of cmdscale as a list, adds column labels to the $points and adds extra elements (conf=points, delta=d, confdist=dist(conf), dhat=d) and the call to the list, and assigns S3 class 'cmdscalex' and 'cmdscale'.
+#' @return Object of class 'cmdscalex' and 'cmdscale' extending \code{\link[stats]{cmdscale}}. This wrapper always returns the results of cmdscale as a list, adds column labels to the $points and adds extra elements (conf=points, delta=d, confdist=dist(conf), dhat=d) and the call to the list, and assigns S3 class 'cmdscalex' and 'cmdscale'.
 #'
 #' @importFrom stats cmdscale as.dist dist
 #'

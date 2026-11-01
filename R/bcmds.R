@@ -1,10 +1,10 @@
-#' Box-Cox MDS
+#' bcmds - Box-Cox MDS 
 #'
 #' This function minimizes the Box-Cox Stress of Chen & Buja (2013) via gradient descent. This is a ratio metric scaling method. The transformations are not straightforward to interpret but mu is associated with fitted distances in the configuration and lambda with the dissimilarities. Concretely for fitted distances (attraction part) it is \eqn{BC_{mu+lambda}(d(X))} and for the repulsion part it is \eqn{delta^lambda BC_{mu}(d(X))} with BC being the one-parameter Box-Cox transformation.
 #'
 #' 
-#' @param delta dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object
-#' @param mu mu parameter. Should be 0 or larger for everything working ok. If mu<0 it works but I find the MDS model is strange and normalized stress tends towards 0 regardless of fit. Use normalized stress at your own risk in that case.
+#' @param delta dissimilarity or distance matrix, dissimilarity or distance data frame or 'dist' object. All non-diagonal entries must be positive. 
+#' @param mu mu parameter. Should be 0 or larger for everything working ok. If mu<0 it still works, but the MDS model is conceptually strange and normalized stress tends towards 0 regardless of fit. Use normalized stress at your own risk in that case.
 #' @param lambda lambda parameter. Must be larger than 0.
 #' @param rho the rho parameter, power for the weights (called nu in the original article).
 #' @param type what type of MDS to fit. Only "ratio" currently. 
@@ -18,7 +18,9 @@
 #' @param principal If 'TRUE', principal axis transformation is applied to the final configuration
 #' @param normconf normalize the configuration to sum(delta^2)=1 (as in the power stresses). Default is FALSE. Note that then the distances in confdist do not match manually calculated ones.
 #' 
-#' @details For numerical reasons with certain parameter combinations, the normalized stress uses a configuration as worst result where every d(X) is 0+addD0. The same number is not added to the delta so there is a small inaccuracy of the normalized stress (but negligible if min(delta)>>addD0). Also, for mu<0 or mu+lambda<0 the normalization cannot generally be trusted (in the worst case of D(X)=0 one would have an 0^(-a)).    
+#' @details For numerical reasons with certain parameter combinations, the normalized stress uses a configuration as the "worst case result" where every d(X) is 0+addD0. The same number is not added to the delta so there is a small inaccuracy of the normalized stress (but negligible if min(delta)>>addD0). Also, for mu<0 or mu+lambda<0 the normalization cannot generally be trusted (in the worst case of D(X)=0 one would have an 0^(-a)).
+#'
+#' Note that input delta that are zero in the off-diagonals can make it impossible to calculate the gradient and then the program terminates and returns the gradient for inspection.  
 #'
 #'
 #' @return an object of class 'bcmds' (also inherits from 'smacofP'). It is a list with the components
@@ -49,7 +51,7 @@
 #'
 #' @importFrom stats as.dist dist
 #' 
-#' @author Lisha Chen & Thomas Rusch
+#' @author Thomas Rusch based on code by Lisha Chen
 #' 
 #' @examples
 #' dis<-smacof::kinshipdelta
@@ -119,7 +121,11 @@ while ( stepsize > acc && i < niter)
       M <- Dnu*D1mulam2-D1mu2*Dnulam    
       E <- matrix(rep(1,n*d),n,d)
       Grad <- X0*(M%*%E)-M%*%X0
-      normgrad <- (enorm(X0)/enorm(Grad))*Grad         
+      if(is.na(norm(Grad))) {
+          cat("The 0-norm of the gradient cannot be calculated. Most likely there are 'NA' in the gradient, resulting from 0s in the input matrix. I returned the gradient as the object, please inspect it.\n")
+          return(Grad)
+      }    
+      normgrad <- (enorm(X0)/enorm(Grad))*Grad    
       X1 <- X0 - stepsize*normgrad
      }
     i <- i+1

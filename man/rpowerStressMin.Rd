@@ -7,7 +7,7 @@
 \alias{rpstressMin}
 \alias{rpStressMin}
 \alias{rpstressmds}
-\title{Restricted Power Stress SMACOF}
+\title{rpostmds - Restricted Power Stress MDS (RPOST-MDS) with SMACOF}
 \usage{
 rpowerStressMin(
   delta,

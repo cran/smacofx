@@ -1,4 +1,4 @@
-#' Corpse Paint
+#' corpsepaint: Images of Corpse Paint
 #'
 #' A matrix of gray scale images of people in "corpse paint", a black-and-white make-up, plus a surprise.
 #'

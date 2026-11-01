@@ -1,4 +1,4 @@
-#' S3 method for bcmds objects
+#' biplotmds method for bcmds objects
 #'
 #' @param object An object of class smacofP
 #' @param extvar Data frame with external variables.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/BankingCrisesDistances-data.R
 \name{BankingCrisesDistances}
 \alias{BankingCrisesDistances}
-\title{Banking Crises Distances}
+\title{BankingCrisesDistances: Banking Crises Distances}
 \format{
 A 69 x 70 matrix.
 }

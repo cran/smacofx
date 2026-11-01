@@ -12,6 +12,7 @@
 #' @param itmaxi maximum iterations of the MDS procedure
 #'
 #' @return An array of size n with n coonfigurations
+#' @noRd
 smacofxDeleteOne <- function (object, delta, weightmat, init, ndim, type, verbose=FALSE, itmaxi=10000) {
     ocall<-as.call(object$call)
     if(is.numeric(ocall$itmax)) itmaxi <- ocall$itmax #if the call has an itmax agrumnet we use that otherwise we use what was supplied in jackmds.smacofP

@@ -6,7 +6,7 @@
 \alias{apostmds}
 \alias{apstressMin}
 \alias{apstressmds}
-\title{Approximate Power Stress MDS}
+\title{apostmds- Approximate Power Stress MDS with SMACOF}
 \usage{
 apStressMin(
   delta,
@@ -129,7 +129,7 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym
 }
 }
 \description{
-An implementation to minimize approximate power stress by majorization with ratio or interval optimal scaling. This approximates the power stress objective in such a way that it can be fitted with SMACOF without distance transformations. See Rusch et al. (2021) for details.
+An implementation to minimize approximate power stress by majorization. This approximates the power stress objective in such a way that it can be fitted with SMACOF without distance transformations. See Rusch et al. (2021) for details.
 }
 \section{Note}{
 

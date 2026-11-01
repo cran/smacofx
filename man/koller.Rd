@@ -2,7 +2,7 @@
 % Please edit documentation in R/koller-data.R
 \name{koller}
 \alias{koller}
-\title{Responses to the SCC scale and CSII scale (n=1013).}
+\title{koller: Responses to the SCC scale and CSII scale (n=1013).}
 \format{
 A 1013 x 24 data frame.
 }

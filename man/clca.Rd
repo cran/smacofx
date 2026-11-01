@@ -2,7 +2,7 @@
 % Please edit documentation in R/clca.R
 \name{clca}
 \alias{clca}
-\title{Curvilinear Component Analysis (CLCA)}
+\title{CLCA - Curvilinear Component Analysis}
 \usage{
 clca(
   delta,

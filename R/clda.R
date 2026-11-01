@@ -1,4 +1,4 @@
-#' Curvilinear Distance Analysis (CLDA)
+#' CLDA - Curvilinear Distance Analysis
 #'
 #'
 #' A function to run curvilinear distance analysis via \code{\link[ProjectionBasedClustering]{CCA}} and returning a 'smacofP' object. Note this functionality is rather rudimentary.   

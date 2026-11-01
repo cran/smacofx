@@ -1,4 +1,4 @@
-#' Curvilinear Component Analysis (CLCA)
+#' CLCA - Curvilinear Component Analysis
 #'
 #'
 #' A wrapper to run curvilinear component analysis via \code{\link[ProjectionBasedClustering]{CCA}} and returning a 'smacofP' object. Note this functionality is rather rudimentary.   

@@ -2,6 +2,7 @@
 #'
 #' @param x numeric matrix
 #' @return squared distance matrix
+#' @noRd 
 sqdist <- function (x) {
     s <- tcrossprod (x)
     v <- diag (s)
@@ -15,3 +16,4 @@ sqdistOld <- function (x) {
     v <- diag (s)
     return(outer (v, v, "+") - 2 * s) #Bug
 }
+

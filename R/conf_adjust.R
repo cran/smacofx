@@ -1,4 +1,4 @@
-#'conf_adjust: a function to procrustes adjust two matrices
+#'conf_adjust - a function to procrustes adjust two matrices
 #'
 #'@param conf1 reference configuration, a numeric matrix
 #'@param conf2 another configuration, a numeric matrix 

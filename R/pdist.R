@@ -3,6 +3,7 @@
 #' @param x numeric matrix
 #' @param p p>0 the Minkoswki distance
 #' @return squared Minkowski distance matrix
+#' @noRd
 pdist <- function (x,p) {
     s <- tcrossprod (x)
     v <- diag (s)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/alignplot.R
 \name{alignplot}
 \alias{alignplot}
-\title{Function to plot Procrustes aligned MDS configurations}
+\title{alignplot: Function to plot Procrustes aligned MDS configurations}
 \usage{
 alignplot(objectlist, reference, layoutmat = NULL, mains = NULL, ...)
 }
@@ -18,7 +18,7 @@ alignplot(objectlist, reference, layoutmat = NULL, mains = NULL, ...)
 \item{...}{additional arguments passed to the confplot of 'plot.smacofP'. See 'plot.smacof' for the options.}
 }
 \value{
-no return value; just plots
+no return value; just plots. returns the objectlist invisibly.
 }
 \description{
 This plots a series of Procrustes aligned configuration plots, aligned to the reference configuration.

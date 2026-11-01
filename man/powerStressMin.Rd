@@ -7,7 +7,7 @@
 \alias{pstressMin}
 \alias{pStressMin}
 \alias{pstressmds}
-\title{Power Stress SMACOF}
+\title{postmds - Power Stress MDS (POST-MDS) with SMACOF}
 \usage{
 powerStressMin(
   delta,
@@ -145,7 +145,7 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym
 }
 }
 \description{
-An implementation to minimize power stress by majorization with ratio or interval optimal scaling. Usually more accurate but slower than powerStressFast. Uses a repeat loop.
+An implementation to minimize power stress by majorization with ratio or interval optimal scaling. Usually more accurate but slower than \code{\link{powerStressFast}}.
 }
 \examples{
 dis<-smacof::kinshipdelta

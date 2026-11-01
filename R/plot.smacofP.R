@@ -44,7 +44,7 @@
 #' @importFrom stats loess lm predict coef
 #' @importFrom grDevices chull
 #'
-#' @return no return value; just plots for class 'smacofP' (see details)
+#' @return no return value, just plots for class 'smacofP' (see details). Returns the object 'x' invisibly.
 #' 
 #' @export
 #' 
@@ -415,5 +415,5 @@ if (plot.type == "resplot") {
     if(!is.null(x$tweightmat)) wghts <- x$tweightmat 
     weights::wtd.hist(x$delta, weight = wghts, main = main, xlab = xlab, ylab = ylab, col = col.hist, ...) 
   }
-    
+  invisible(x)  
  }

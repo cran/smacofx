@@ -3,6 +3,7 @@
 #'
 #' @param x numeric matrix
 #' @return the double centered matrix
+#' @noRd
 doubleCenter <- function(x) {
         n <- dim(x)[1]
         m <- dim(x)[2]

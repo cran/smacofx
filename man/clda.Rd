@@ -2,7 +2,7 @@
 % Please edit documentation in R/clda.R
 \name{clda}
 \alias{clda}
-\title{Curvilinear Distance Analysis (CLDA)}
+\title{CLDA - Curvilinear Distance Analysis}
 \usage{
 clda(
   delta,

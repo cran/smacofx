@@ -2,7 +2,7 @@
 % Please edit documentation in R/powerStressFast.R
 \name{powerStressFast}
 \alias{powerStressFast}
-\title{Power stress minimization by NEWUOA (nloptr)}
+\title{Ratio Power Stress MDS (POST-MDS) with NEWUOA (nloptr)}
 \usage{
 powerStressFast(
   delta,
@@ -63,7 +63,7 @@ and some additional components
 }
 }
 \description{
-An implementation to minimize power stress by a derivative-free trust region optimization algorithm (NEWUOA). Much faster than majorizing as used in powerStressMin but perhaps less accurate.
+An implementation to minimize power stress by a derivative-free trust region optimization algorithm (NEWUOA). Can't do optimal scaling. Much faster than majorizing as used in powerStressMin but perhaps less accurate.
 }
 \examples{
 dis<-smacof::kinshipdelta

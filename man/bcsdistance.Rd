@@ -2,7 +2,7 @@
 % Please edit documentation in R/bcsdistance.R
 \name{bcsdistance}
 \alias{bcsdistance}
-\title{Calculates the blended Chi-square distance matrix between n vectors}
+\title{bcsdistance - Calculates the blended Chi-square distance matrix between n vectors}
 \usage{
 bcsdistance(x, a = 0.5, b = 1 - a)
 }

@@ -1,4 +1,4 @@
-#' Nonlinear ratio MDS with optimal power of dissimilarities
+#' opmds - Nonlinear ratio MDS with optimal power of dissimilarities
 #'
 #' An implementation to minimize explicitly normalized stress over dissimilarities to a power by majorization with ratio optimal scaling in an alternating minimization algorithm. The optimal power transformation lambda of the dissimilarities is found by an inner optimization step via the Brent-Dekker method.
 #' 
@@ -37,7 +37,7 @@
 #'
 #' @importFrom stats dist as.dist optimize
 #' 
-#' @seealso See \code{\link[stops]{stops}} for a similar, more flexible idea.
+#' @seealso See \code{\link[stops]{stops}} for a similar, more flexible and more general idea.
 #' 
 #' @examples
 #' dis<-smacof::kinshipdelta

@@ -1,6 +1,6 @@
-#' Sammon Mapping SMACOF
+#' sammonmap - Sammon Mapping MDS with SMACOF
 #'
-#' An implementation to minimize Sammon stress by majorization with ratio and interval optimal scaling. Uses a repeat loop.
+#' An implementation to minimize Sammon stress by majorization with ratio and interval optimal scaling.
 #' 
 #' @param delta dist object or a symmetric, numeric data.frame or matrix of distances
 #' @param type what type of MDS to fit. Currently one of "ratio" and "interval". Default is "ratio".

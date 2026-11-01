@@ -2,7 +2,7 @@
 % Please edit documentation in R/sammon.R
 \name{sammon}
 \alias{sammon}
-\title{Wrapper to \code{sammon} for S3 class}
+\title{Wrapper to \code{sammon}}
 \usage{
 sammon(d, y = NULL, k = 2, ...)
 }
@@ -13,16 +13,16 @@ sammon(d, y = NULL, k = 2, ...)
 
 \item{k}{The dimension of the configuration}
 
-\item{...}{Additional parameters passed to \code{sammon}, see \code{\link{sammon}}}
+\item{...}{Additional parameters passed to \code{sammon}, see \code{\link[MASS]{sammon}}}
 }
 \value{
-Object of class 'sammonx' inheriting from \code{\link{sammon}}. This wrapper adds an extra slot to the list with the call, adds column labels to the $points, adds slots conf=points, delta=d, dhat=normalized dissimilarities, confdist=distance between points in conf, stress.m=stress, stress=sqrt(stress.m) and assigns S3 classes 'sammonx', 'sammon' and 'cmdscalex'.
+Object of class 'sammonx' inheriting from \code{\link[MASS]{sammon}}. This wrapper adds an extra slot to the list with the call, adds column labels to the \code{$points}, adds slots conf=points, delta=d, dhat=normalized dissimilarities, confdist=distance between points in conf, stress.m=stress, stress=sqrt(stress.m) and assigns S3 classes 'sammonx', 'sammon' and 'cmdscalex'.
 }
 \description{
-Wrapper to \code{sammon} for S3 class
+Wrapper to \code{sammon}
 }
 \details{
-Overloads MASS::sammon and adds new slots and class attributes for which there are methods.
+Overloads \code{\link[MASS]{sammon}} and adds new slots and class attributes for which there are methods.
 }
 \examples{
 dis<-as.matrix(smacof::kinshipdelta)

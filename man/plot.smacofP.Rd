@@ -81,7 +81,7 @@
 \item{...}{Further plot arguments passed: see 'plot.smacof' and 'plot' for detailed information.}
 }
 \value{
-no return value; just plots for class 'smacofP' (see details)
+no return value, just plots for class 'smacofP' (see details). Returns the object 'x' invisibly.
 }
 \description{
 S3 plot method for smacofP objects

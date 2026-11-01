@@ -2,7 +2,7 @@
 % Please edit documentation in R/cmdscale.R
 \name{cmdscale}
 \alias{cmdscale}
-\title{Wrapper to \code{cmdscale} for S3 class}
+\title{Wrapper to \code{cmdscale}}
 \usage{
 cmdscale(d, k = 2, eig = FALSE, ...)
 }
@@ -16,13 +16,13 @@ cmdscale(d, k = 2, eig = FALSE, ...)
 \item{...}{additional parameters passed to cmdscale. See \code{\link{cmdscale}}}
 }
 \value{
-Object of class 'cmdscalex' and 'cmdscale' extending \code{\link{cmdscale}}. This wrapper always returns the results of cmdscale as a list, adds column labels to the $points and adds extra elements (conf=points, delta=d, confdist=dist(conf), dhat=d) and the call to the list, and assigns S3 class 'cmdscalex' and 'cmdscale'.
+Object of class 'cmdscalex' and 'cmdscale' extending \code{\link[stats]{cmdscale}}. This wrapper always returns the results of cmdscale as a list, adds column labels to the $points and adds extra elements (conf=points, delta=d, confdist=dist(conf), dhat=d) and the call to the list, and assigns S3 class 'cmdscalex' and 'cmdscale'.
 }
 \description{
-Wrapper to \code{cmdscale} for S3 class
+Wrapper to \code{cmdscale}
 }
 \details{
-overloads stats::cmdscale turns on the liosting and adds slots and class attributes for which there are methods.
+overloads \code{\link[stats]{cmdscale}} and adds slots and class attributes for which there are methods.
 }
 \examples{
 dis<-as.matrix(smacof::kinshipdelta)

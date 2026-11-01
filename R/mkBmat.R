@@ -2,6 +2,7 @@
 #' 
 #' only used internally
 #' @param x matrix
+#' @noRd
 mkBmat <- function (x) {
     d <- rowSums (x)
     x <- -x

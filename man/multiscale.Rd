@@ -2,9 +2,37 @@
 % Please edit documentation in R/multiscale.R
 \name{multiscale}
 \alias{multiscale}
-\title{Multiscale SMACOF}
+\alias{multiscalemds}
+\alias{mlmds}
+\title{multiscale - Multiscale MDS with SMACOF}
 \usage{
 multiscale(
+  delta,
+  type = c("ratio", "interval"),
+  weightmat,
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  kappa = 0.01,
+  principal = FALSE
+)
+
+multiscalemds(
+  delta,
+  type = c("ratio", "interval"),
+  weightmat,
+  init = NULL,
+  ndim = 2,
+  acc = 1e-06,
+  itmax = 10000,
+  verbose = FALSE,
+  kappa = 0.01,
+  principal = FALSE
+)
+
+mlmds(
   delta,
   type = c("ratio", "interval"),
   weightmat,
@@ -58,7 +86,7 @@ a 'smacofP' object (inheriting from 'smacofB', see \code{\link[smacof]{smacofSym
 }
 }
 \description{
-An implementation for maximum likelihood MDS aka multiscale that minimizes the multiscale stress by majorization with ratio and interval optimal scaling. Uses a repeat loop. Note that since this done via the route of r-sytress, the multiscale stress is approximate and only accuarte for kappa->0.
+An implementation for maximum likelihood MDS aka multiscale that minimizes the multiscale stress by majorization with ratio and interval optimal scaling. Note that since this done via the route of r-stress, the multiscale stress is approximate and only accurate for kappa -> 0.
 }
 \section{Warning}{
  The input delta will internally get transformed to the log scale, so make sure that log(delta)>=0 otherwise it throws an error. It is often a good idea to use 1+delta in this case.
